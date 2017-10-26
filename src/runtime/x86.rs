@@ -131,18 +131,6 @@ pub enum __Feature {
     #[doc(hidden)] __NonExhaustive,
 }
 
-/// Sets the `bit`-th bit of `x`.
-fn set_bit(x: usize, bit: u32) -> usize {
-    debug_assert!(32 > bit);
-    x | 1 << bit
-}
-
-/// Tests the `bit`-th bit of `x`.
-fn test_bit(x: usize, bit: u32) -> bool {
-    debug_assert!(32 > bit);
-    x & (1 << bit) != 0
-}
-
 /// Run-time feature detection on x86 works by using the CPUID instruction.
 ///
 /// The [CPUID Wikipedia page][wiki_cpuid] contains
@@ -185,44 +173,22 @@ fn detect_features() -> usize {
 
     let mut value: usize = 0;
 
-    if test_bit(extended_features_ebx, 3) {
-        value = set_bit(value, __Feature::bmi as u32);
-    }
-    if test_bit(extended_features_ebx, 8) {
-        value = set_bit(value, __Feature::bmi2 as u32);
-    }
+    // CPUID call with EAX=7, ECX=0 => Extended Features in EBX and ECX (unneeded):
+    if bit::test(extended_features_ebx, 3) { value = bit::set(value, __Feature::bmi as u32); }
+    if bit::test(extended_features_ebx, 8) { value = bit::set(value, __Feature::bmi2 as u32); }
 
-    if test_bit(proc_info_ecx, 0) {
-        value = set_bit(value, __Feature::sse3 as u32);
-    }
-    if test_bit(proc_info_ecx, 5) {
-        value = set_bit(value, __Feature::abm as u32);
-    }
-    if test_bit(proc_info_ecx, 9) {
-        value = set_bit(value, __Feature::ssse3 as u32);
-    }
-    if test_bit(proc_info_ecx, 12) {
-        value = set_bit(value, __Feature::fma as u32);
-    }
-    if test_bit(proc_info_ecx, 19) {
-        value = set_bit(value, __Feature::sse4_1 as u32);
-    }
-    if test_bit(proc_info_ecx, 20) {
-        value = set_bit(value, __Feature::sse4_2 as u32);
-    }
-    if test_bit(proc_info_ecx, 21) {
-        value = set_bit(value, __Feature::tbm as u32);
-    }
-    if test_bit(proc_info_ecx, 23) {
-        value = set_bit(value, __Feature::popcnt as u32);
-    }
+    // CPUID call with EAX=1 => feature bits in ECX and EDX:
+    if bit::test(proc_info_ecx, 0) { value = bit::set(value, __Feature::sse3 as u32); }
+    if bit::test(proc_info_ecx, 5) { value = bit::set(value, __Feature::abm as u32); }
+    if bit::test(proc_info_ecx, 9) { value = bit::set(value, __Feature::ssse3 as u32); }
+    if bit::test(proc_info_ecx, 12) { value = bit::set(value, __Feature::fma as u32); }
+    if bit::test(proc_info_ecx, 19) { value = bit::set(value, __Feature::sse4_1 as u32); }
+    if bit::test(proc_info_ecx, 20) { value = bit::set(value, __Feature::sse4_2 as u32); }
+    if bit::test(proc_info_ecx, 21) { value = bit::set(value, __Feature::tbm as u32); }
+    if bit::test(proc_info_ecx, 23) { value = bit::set(value, __Feature::popcnt as u32); }
 
-    if test_bit(proc_info_edx, 25) {
-        value = set_bit(value, __Feature::sse as u32);
-    }
-    if test_bit(proc_info_edx, 26) {
-        value = set_bit(value, __Feature::sse2 as u32);
-    }
+    if bit::set(proc_info_edx, 25) { value = bit::set(value, __Feature::sse as u32); }
+    if bit::set(proc_info_edx, 26) { value = bit::set(value, __Feature::sse2 as u32); }
 
     // ECX[26] detects XSAVE and ECX[27] detects OSXSAVE, that is, whether the
     // OS is AVX enabled and supports saving the state of the AVX/AVX2 vector
@@ -248,37 +214,19 @@ fn detect_features() -> usize {
 
         // This is safe because on x86 `xgetbv` is always available.
         if unsafe { xgetbv(0) } & 6 == 6 {
-            if test_bit(proc_info_ecx, 28) {
-                value = set_bit(value, __Feature::avx as u32);
+            if bit::test(ebx, 5) { value = bit::set(value, __Feature::avx2 as u32); }
+            if bit::test(ecx, 28) { value = bit::set(value, __Feature::avx as u32); }
+
+            if bit::test(proc_info_ecx, 28) {
+                value = bit::set(value, __Feature::avx as u32);
             }
-            if test_bit(extended_features_ebx, 5) {
-                value = set_bit(value, __Feature::avx2 as u32);
+            if bit::test(extended_features_ebx, 5) {
+                value = bit::set(value, __Feature::avx2 as u32);
             }
         }
     }
 
     value
-}
-
-/// This global variable is a bitset used to cache the features supported by
-/// the CPU.
-static FEATURES: AtomicUsize = AtomicUsize::new(::std::usize::MAX);
-
-/// Performs run-time feature detection.
-///
-/// On its first invocation, it detects the CPU features and caches them
-/// in the `FEATURES` global variable as an `AtomicUsize`.
-///
-/// It uses the `__Feature` variant to index into this variable as a bitset. If
-/// the bit is set, the feature is enabled, and otherwise it is disabled.
-///
-/// PLEASE: do not use this, it is an implementation detail subject to change.
-#[doc(hidden)]
-pub fn __unstable_detect_feature(x: __Feature) -> bool {
-    if FEATURES.load(Ordering::Relaxed) == ::std::usize::MAX {
-        FEATURES.store(detect_features(), Ordering::Relaxed);
-    }
-    test_bit(FEATURES.load(Ordering::Relaxed), x as u32)
 }
 
 #[cfg(test)]
@@ -302,3 +250,4 @@ mod tests {
         println!("fma: {:?}", cfg_feature_enabled!("fma"));
     }
 }
+

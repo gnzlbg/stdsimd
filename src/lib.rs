@@ -164,10 +164,14 @@ mod v512;
 mod v64;
 
 #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
-#[macro_use]
 mod x86;
 
 #[cfg(any(target_arch = "arm", target_arch = "aarch64"))]
 mod arm;
 #[cfg(target_arch = "aarch64")]
 mod aarch64;
+
+#[macro_use]
+mod runtime;
+#[macro_use]
+pub use self::runtime::{__Feature, __unstable_detect_feature};

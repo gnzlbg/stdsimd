@@ -14,8 +14,6 @@ pub use self::bmi::*;
 pub use self::bmi2::*;
 pub use self::tbm::*;
 
-pub use self::runtime::{__unstable_detect_feature, __Feature};
-
 /// 128-bit wide signed integer vector type
 #[allow(non_camel_case_types)]
 pub type __m128i = ::v128::i8x16;
@@ -25,8 +23,6 @@ pub type __m256i = ::v256::i8x32;
 
 #[macro_use]
 mod macros;
-#[macro_use]
-mod runtime;
 
 mod sse;
 mod sse2;

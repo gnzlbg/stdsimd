@@ -293,17 +293,6 @@ macro_rules! cfg_feature_enabled {
     )
 }
 
-/// On ARM features are only detected at compile-time using
-/// cfg(target_feature), so if this macro is executed the
-/// feature is not supported.
-#[cfg(any(target_arch = "arm", target_arch = "aarch64"))]
-#[macro_export]
-#[doc(hidden)]
-macro_rules! __unstable_detect_feature {
-    ("neon") => { false };
-    ($t:tt) => { compile_error!(concat!("unknown target feature: ", $t)) };
-}
-
 /// In all unsupported architectures using the macro is an error
 #[cfg(not(any(target_arch = "x86", target_arch = "x86_64",
               target_arch = "arm", target_arch = "aarch64")))]
