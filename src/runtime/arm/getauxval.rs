@@ -1,5 +1,3 @@
-mod cpuinfo;
-
 mod hwcap {
     const NEON: usize = 1 << 12;
     const AT: usize = 16;
@@ -48,7 +46,7 @@ fn getauxval(t: usize) -> Result<usize, ::std::io::Error> {
  }
 
 }
-
+/*
 /// Read auxval from /proc/self/auxval
 mod proc {
     #[repr(C)]
@@ -90,6 +88,14 @@ fn getauxval(t: usize) -> usize {
     if let Ok(v) = proc::getauxval(t) {
         return t;
     }
+    if let Ok(v) = auxv_cpuinfo::getauxval(t) {
+        return t;
+    }
+    0
+}
+ */
+
+fn getauxval(t: usize) -> usize {
     if let Ok(v) = auxv_cpuinfo::getauxval(t) {
         return t;
     }

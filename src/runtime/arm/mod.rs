@@ -1,5 +1,6 @@
 //! Run-time feature detection on arm-like architectures.
 mod getauxval;
+mod cpuinfo;
 
 #[cfg(target_arch = "arm")]
 #[macro_export]

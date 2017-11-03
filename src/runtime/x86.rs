@@ -15,7 +15,8 @@
 //! this functions queries the CPU for the available features and stores them
 //! in a global `AtomicUsize` variable. The query is performed by just checking
 //! whether the feature bit in this global variable is set or cleared.
-use std::sync::atomic::{AtomicUsize, Ordering};
+
+use super::bit;
 
 /// This macro maps the string-literal feature names to values of the
 /// `__Feature` enum at compile-time. The feature names used are the same as
@@ -146,7 +147,7 @@ pub enum __Feature {
 /// [wiki_cpuid]: https://en.wikipedia.org/wiki/CPUID
 /// [intel64_ref]: http://www.intel.de/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-instruction-set-reference-manual-325383.pdf
 /// [amd64_ref]: http://support.amd.com/TechDocs/24594.pdf
-fn detect_features() -> usize {
+pub fn detect_features() -> usize {
     let extended_features_ebx;
     let proc_info_ecx;
     let proc_info_edx;
@@ -187,8 +188,8 @@ fn detect_features() -> usize {
     if bit::test(proc_info_ecx, 21) { value = bit::set(value, __Feature::tbm as u32); }
     if bit::test(proc_info_ecx, 23) { value = bit::set(value, __Feature::popcnt as u32); }
 
-    if bit::set(proc_info_edx, 25) { value = bit::set(value, __Feature::sse as u32); }
-    if bit::set(proc_info_edx, 26) { value = bit::set(value, __Feature::sse2 as u32); }
+    if bit::test(proc_info_edx, 25) { value = bit::set(value, __Feature::sse as u32); }
+    if bit::test(proc_info_edx, 26) { value = bit::set(value, __Feature::sse2 as u32); }
 
     // ECX[26] detects XSAVE and ECX[27] detects OSXSAVE, that is, whether the
     // OS is AVX enabled and supports saving the state of the AVX/AVX2 vector
@@ -198,7 +199,7 @@ fn detect_features() -> usize {
     // - https://hg.mozilla.
     // org/mozilla-central/file/64bab5cbb9b6/mozglue/build/SSE.cpp#l190
     //
-    if test_bit(proc_info_ecx, 26) && test_bit(proc_info_ecx, 27) {
+    if bit::test(proc_info_ecx, 26) && bit::test(proc_info_ecx, 27) {
         /// XGETBV: reads the contents of the extended control
         /// register (XCR).
         unsafe fn xgetbv(xcr_no: u32) -> u64 {
@@ -214,9 +215,6 @@ fn detect_features() -> usize {
 
         // This is safe because on x86 `xgetbv` is always available.
         if unsafe { xgetbv(0) } & 6 == 6 {
-            if bit::test(ebx, 5) { value = bit::set(value, __Feature::avx2 as u32); }
-            if bit::test(ecx, 28) { value = bit::set(value, __Feature::avx as u32); }
-
             if bit::test(proc_info_ecx, 28) {
                 value = bit::set(value, __Feature::avx as u32);
             }
