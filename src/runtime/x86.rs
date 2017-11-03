@@ -174,22 +174,47 @@ pub fn detect_features() -> usize {
 
     let mut value: usize = 0;
 
-    // CPUID call with EAX=7, ECX=0 => Extended Features in EBX and ECX (unneeded):
-    if bit::test(extended_features_ebx, 3) { value = bit::set(value, __Feature::bmi as u32); }
-    if bit::test(extended_features_ebx, 8) { value = bit::set(value, __Feature::bmi2 as u32); }
+    // CPUID call with EAX=7, ECX=0 => Extended Features in EBX and ECX
+    // (unneeded):
+    if bit::test(extended_features_ebx, 3) {
+        value = bit::set(value, __Feature::bmi as u32);
+    }
+    if bit::test(extended_features_ebx, 8) {
+        value = bit::set(value, __Feature::bmi2 as u32);
+    }
 
     // CPUID call with EAX=1 => feature bits in ECX and EDX:
-    if bit::test(proc_info_ecx, 0) { value = bit::set(value, __Feature::sse3 as u32); }
-    if bit::test(proc_info_ecx, 5) { value = bit::set(value, __Feature::abm as u32); }
-    if bit::test(proc_info_ecx, 9) { value = bit::set(value, __Feature::ssse3 as u32); }
-    if bit::test(proc_info_ecx, 12) { value = bit::set(value, __Feature::fma as u32); }
-    if bit::test(proc_info_ecx, 19) { value = bit::set(value, __Feature::sse4_1 as u32); }
-    if bit::test(proc_info_ecx, 20) { value = bit::set(value, __Feature::sse4_2 as u32); }
-    if bit::test(proc_info_ecx, 21) { value = bit::set(value, __Feature::tbm as u32); }
-    if bit::test(proc_info_ecx, 23) { value = bit::set(value, __Feature::popcnt as u32); }
+    if bit::test(proc_info_ecx, 0) {
+        value = bit::set(value, __Feature::sse3 as u32);
+    }
+    if bit::test(proc_info_ecx, 5) {
+        value = bit::set(value, __Feature::abm as u32);
+    }
+    if bit::test(proc_info_ecx, 9) {
+        value = bit::set(value, __Feature::ssse3 as u32);
+    }
+    if bit::test(proc_info_ecx, 12) {
+        value = bit::set(value, __Feature::fma as u32);
+    }
+    if bit::test(proc_info_ecx, 19) {
+        value = bit::set(value, __Feature::sse4_1 as u32);
+    }
+    if bit::test(proc_info_ecx, 20) {
+        value = bit::set(value, __Feature::sse4_2 as u32);
+    }
+    if bit::test(proc_info_ecx, 21) {
+        value = bit::set(value, __Feature::tbm as u32);
+    }
+    if bit::test(proc_info_ecx, 23) {
+        value = bit::set(value, __Feature::popcnt as u32);
+    }
 
-    if bit::test(proc_info_edx, 25) { value = bit::set(value, __Feature::sse as u32); }
-    if bit::test(proc_info_edx, 26) { value = bit::set(value, __Feature::sse2 as u32); }
+    if bit::test(proc_info_edx, 25) {
+        value = bit::set(value, __Feature::sse as u32);
+    }
+    if bit::test(proc_info_edx, 26) {
+        value = bit::set(value, __Feature::sse2 as u32);
+    }
 
     // ECX[26] detects XSAVE and ECX[27] detects OSXSAVE, that is, whether the
     // OS is AVX enabled and supports saving the state of the AVX/AVX2 vector
@@ -248,4 +273,3 @@ mod tests {
         println!("fma: {:?}", cfg_feature_enabled!("fma"));
     }
 }
-

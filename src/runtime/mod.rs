@@ -6,7 +6,7 @@ mod bit;
 #[macro_use]
 mod x86;
 #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
-pub use self::x86::{__Feature};
+pub use self::x86::__Feature;
 #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
 use self::x86::detect_features;
 
@@ -14,9 +14,9 @@ use self::x86::detect_features;
 #[macro_use]
 mod arm;
 #[cfg(any(target_arch = "arm", target_arch = "aarch64"))]
-pub use self::arm::{__Feature};
+pub use self::arm::__Feature;
 #[cfg(any(target_arch = "arm", target_arch = "aarch64"))]
-use self::arm::{detect_features};
+use self::arm::detect_features;
 
 /// Performs run-time feature detection.
 #[doc(hidden)]

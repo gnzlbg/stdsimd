@@ -173,4 +173,4 @@ mod aarch64;
 
 #[macro_use]
 mod runtime;
-pub use self::runtime::{__Feature, __unstable_detect_feature};
+pub use self::runtime::{__unstable_detect_feature, __Feature};

@@ -30,14 +30,17 @@ pub enum __Feature {
 }
 
 pub fn detect_features() -> usize {
+    use self::getauxval::{getauxval, hwcap, hwcap2};
+    use super::bit;
+
     let value: usize = 0;
     let hwcap = getauxval(hwcap::AT);
     let hwcap2 = getauxval(hwcap2::AT);
 
-    if bit::test(hwcap, hwcap::NEON) {
+    if bit::test(hwcap, hwcap::NEON as u32) {
         bit::set(value, __Feature::neon as u32);
     }
-    if bit::test(hwcap, hwcap::PMULL) {
+    if bit::test(hwcap2, hwcap2::PMULL as u32) {
         bit::set(value, __Feature::pmull as u32);
     }
     value

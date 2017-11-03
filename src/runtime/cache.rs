@@ -3,7 +3,8 @@
 use super::bit;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
-/// This global variable is a bitset used to cache the features supported by the
+/// This global variable is a bitset used to cache the features supported by
+/// the
 /// CPU.
 static CACHE: AtomicUsize = AtomicUsize::new(::std::usize::MAX);
 
@@ -18,8 +19,10 @@ static CACHE: AtomicUsize = AtomicUsize::new(::std::usize::MAX);
 ///
 /// PLEASE: do not use this, it is an implementation detail subject to change.
 pub fn test<F>(bit: u32, f: F) -> bool
-    where F: FnOnce() -> usize {
-    if CACHE.load(Ordering::Relaxed)  == ::std::usize::MAX {
+where
+    F: FnOnce() -> usize,
+{
+    if CACHE.load(Ordering::Relaxed) == ::std::usize::MAX {
         CACHE.store(f(), Ordering::Relaxed);
     }
     bit::test(CACHE.load(Ordering::Relaxed), bit)

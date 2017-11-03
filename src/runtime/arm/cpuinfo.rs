@@ -2,57 +2,55 @@
 
 /// cpuinfo
 pub struct CpuInfo {
-    raw: String
+    raw: String,
 }
 
 /// Field of cpuinfo
-pub struct CpuInfoField(Option<&str>);
+pub struct CpuInfoField<'a>(Option<&'a str>);
 
-impl PartialEq<&str> for CpuInfoField {
-    fn eq(&self, other: &str) -> bool {
+impl<'a> PartialEq<&'a str> for CpuInfoField<'a> {
+    fn eq(&self, other: &&'a str) -> bool {
         match self.0 {
             None => other.len() == 0,
             Some(f) => f == other.trim(),
         }
     }
 }
-impl Eq<&str> for CpuInfoFied {}
 
-impl CpuInfoField {
-    fn new(v: Option<&str>) -> Self {
+impl<'a> CpuInfoField<'a> {
+    pub fn new<'b>(v: Option<&'b str>) -> CpuInfoField<'b> {
         match v {
-            None => Self(v),
-            Some(f) => Self(f.trim()),
+            None => CpuInfoField::<'b>(None),
+            Some(f) => CpuInfoField::<'b>(Some(f.trim())),
         }
     }
     /// Does the field exist?
-    fn exists(&self) -> bool {
+    pub fn exists(&self) -> bool {
         self.0.is_some()
     }
     /// Does the field contain `other`?
-    fn has(&self, other: &str) -> bool {
+    pub fn has(&self, other: &str) -> bool {
         match self.0 {
             None => other.len() == 0,
             Some(f) => {
-                let other = other.trim(); 
+                let other = other.trim();
                 for v in f.split(" ") {
-                    if f == other {
+                    if v == other {
                         return true;
                     }
                 }
                 false
             }
         }
-        false
     }
 }
 
 impl CpuInfo {
     /// Reads /proc/cpuinfo into CpuInfo.
     pub fn new() -> Result<CpuInfo, ::std::io::Error> {
-        use ::std::io::Read;
+        use std::io::Read;
         let mut file = ::std::fs::File::open("/proc/cpuinfo")?;
-        let mut cpui = CpuInfo{ raw: String::new() };
+        let mut cpui = CpuInfo { raw: String::new() };
         file.read_to_string(&mut cpui.raw)?;
         Ok(cpui)
     }
@@ -68,11 +66,13 @@ impl CpuInfo {
 
     /// Returns the `raw` contents of `/proc/cpuinfo`
     fn raw(&self) -> &String {
-        self.raw
+        &self.raw
     }
 
-    fn from_str(other: &str) -> Result<CpuInfo, std::io::Error> {
-        Ok(CpuInfo{raw: String::from(other) })
+    fn from_str(other: &str) -> Result<CpuInfo, ::std::io::Error> {
+        Ok(CpuInfo {
+            raw: String::from(other),
+        })
     }
 }
 
@@ -216,10 +216,14 @@ power management:
         assert!(cpuinfo.field("vendor_id") == "GenuineIntel");
         assert!(cpuinfo.field("family") == "6");
         assert!(cpuinfo.field("model") == "23");
-        assert!(cpuinfo.field("model name") ==
-                "Intel(R) Core(TM)2 Duo CPU     T6500  @ 2.10GHz");
-        assert!(cpuinfo.field("flags") ==
-                "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe nx lm constant_tsc arch_perfmon pebs bts aperfmperf pni dtes64 monitor ds_cpl est tm2 ssse3 cx16 xtpr pdcm sse4_1 xsave lahf_lm dtherm");
+        assert!(
+            cpuinfo.field("model name")
+                == "Intel(R) Core(TM)2 Duo CPU     T6500  @ 2.10GHz"
+        );
+        assert!(
+            cpuinfo.field("flags")
+                == "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe nx lm constant_tsc arch_perfmon pebs bts aperfmperf pni dtes64 monitor ds_cpl est tm2 ssse3 cx16 xtpr pdcm sse4_1 xsave lahf_lm dtherm"
+        );
         assert!(cpuinfo.field("flags").has("fpu"));
         assert!(cpuinfo.field("flags").has("dtherm"));
         assert!(cpuinfo.field("flags").has("sse2"));

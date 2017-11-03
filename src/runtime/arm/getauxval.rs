@@ -1,49 +1,57 @@
-mod hwcap {
-    const NEON: usize = 1 << 12;
-    const AT: usize = 16;
+//! getauxval
+
+use super::cpuinfo;
+
+pub mod hwcap {
+    pub const NEON: usize = 1 << 12;
+    pub const AT: usize = 16;
 }
-mod hwcap2 {
-    const PMULL: usize = 1 << 2;
-    const AT: usize = 26;
+pub mod hwcap2 {
+    pub const PMULL: usize = 1 << 2;
+    pub const AT: usize = 26;
 }
 
 /// Emulate getauxval using /proc/cpuinfo
 mod auxv_cpuinfo {
 
-use super::cpuinfo::CpuInfo;
-use super::{hwcap, hwcap2};
+    use super::cpuinfo::CpuInfo;
+    use super::{hwcap, hwcap2};
 
-/// Is the CPU known to have a broken NEON unit?
-///
-/// See https://crbug.com/341598.
-fn has_broken_neon(cpuinfo: &CpuInfo) -> bool {
-    cpuinfo.field_is("CPU implementer", "0x51")
-        && cpuinfo.field_is("CPU architecture", "7")
-        && cpuinfo.field_is("CPU variant", "0x1")
-        && cpuinfo.field_is("CPU part", "0x04d")
-        && cpuinfo.field_is("CPU revision", "0");
-}
+    /// Is the CPU known to have a broken NEON unit?
+    ///
+    /// See https://crbug.com/341598.
+    fn has_broken_neon(cpuinfo: &CpuInfo) -> bool {
+        cpuinfo.field("CPU implementer") == "0x51"
+            && cpuinfo.field("CPU architecture") == "7"
+            && cpuinfo.field("CPU variant") == "0x1"
+            && cpuinfo.field("CPU part") == "0x04d"
+            && cpuinfo.field("CPU revision") == "0"
+    }
 
-/// Emulates `getauxval` using `/proc/cpuinfo`
-fn getauxval(t: usize) -> Result<usize, ::std::io::Error> {
-    let cpuinfo = CpuInfo::new()?;
+    /// Emulates `getauxval` using `/proc/cpuinfo`
+    pub fn getauxval(t: usize) -> Result<usize, ::std::io::Error> {
+        let cpuinfo = CpuInfo::new()?;
 
-    bool has_neon =
-        (cpuinfo.field_is("CPU architecture", "8")
-         || cpuinfo.has_field_in("Features", "neon"))
-        && !has_broken_neon(cpuinfo);
+        let has_neon: bool = (cpuinfo.field("CPU architecture") == "8"
+            || cpuinfo.field("Features").has("neon"))
+            && !has_broken_neon(&cpuinfo);
 
-    match t {
-        hwcap::AT => { if has_neon { Ok(hwcap::NEON) } else { Ok(0)} },
-        hwcap2::AT => {
-            let v: usize = 0;
-            if cpuinfo.has_field_in("Features", "pmull") {
-                v |= hwcap2::PMULL;
+        match t {
+            hwcap::AT => if has_neon {
+                Ok(hwcap::NEON)
+            } else {
+                Ok(0)
+            },
+            hwcap2::AT => {
+                let mut v: usize = 0;
+                if cpuinfo.field("Features").has("pmull") {
+                    v |= hwcap2::PMULL;
+                }
+                Ok(v)
             }
-            v
+            _ => unreachable!(),
         }
     }
- }
 
 }
 /*
@@ -95,9 +103,9 @@ fn getauxval(t: usize) -> usize {
 }
  */
 
-fn getauxval(t: usize) -> usize {
+pub fn getauxval(t: usize) -> usize {
     if let Ok(v) = auxv_cpuinfo::getauxval(t) {
-        return t;
+        return v;
     }
     0
 }
