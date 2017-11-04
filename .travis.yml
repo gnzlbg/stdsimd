@@ -5,23 +5,60 @@ rust: nightly
 matrix:
   fast_finish: true
   include:
+    # build documentation:
+    - env: DOCS
+      install: true
+      script: ci/dox.sh
+
     - env: TARGET=i586-unknown-linux-gnu
     - env: TARGET=i686-unknown-linux-gnu
     - env: TARGET=x86_64-unknown-linux-gnu NO_ADD=1
     - env: TARGET=x86_64-unknown-linux-gnu-emulated NO_ADD=1 STDSIMD_TEST_EVERYTHING=1
-    - env: TARGET=arm-unknown-linux-gnueabihf
-    - env: TARGET=armv7-unknown-linux-gnueabihf
-    - env: TARGET=aarch64-unknown-linux-gnu
-    - env: TARGET=aarch64-unknown-linux-musl
     - os: osx
       env: TARGET=x86_64-apple-darwin NO_ADD=1
+#    - os: osx
+#      env: TARGET=i686-apple-darwin
+    - env: TARGET=arm-unknown-linux-gnueabihf
+#    - env: TARGET=arm-unknown-linux-musleabihf
+    - env: TARGET=armv7-unknown-linux-gnueabihf
+    - env: TARGET=aarch64-unknown-linux-gnu
+#    - env: TARGET=aarch64-unknown-linux-musl
       script: ci/run.sh
-    - install: true
-      script: ci/dox.sh
+#    - os: osx
+#      osx_image: xcode8.2
+#      env: TARGET=i386-apple-ios
+#           CARGO_TARGET_I386_APPLE_IOS_RUNNER=$HOME/runtest
+#           RUSTFLAGS=-Clink-arg=-mios-simulator-version-min=7.0
+#      before_install:
+#        rustc ./ci/ios/deploy_and_run_on_ios_simulator.rs -o $HOME/runtest
+#    - os: osx
+#      osx_image: xcode8.2
+#      env: TARGET=x86_64-apple-ios
+#           CARGO_TARGET_X86_64_APPLE_IOS_RUNNER=$HOME/runtest
+#           RUSTFLAGS=-Clink-arg=-mios-simulator-version-min=7.0
+#      before_install:
+#        rustc ./ci/ios/deploy_and_run_on_ios_simulator.rs -o $HOME/runtest
+
+#    - env: TARGET=powerpc-unknown-linux-gnu
+#    - env: TARGET=powerpc64-unknown-linux-gnu
+#    - env: TARGET=powerpc64le-unknown-linux-gnu
+#    - env: TARGET=mips-unknown-linux-musl
+#    - env: TARGET=mipsel-unknown-linux-musl
+#    - env: TARGET=mips64-unknown-linux-gnuabi64
+#    - env: TARGET=mips64el-unknown-linux-gnuabi64
+#    - env: TARGET=mips-unknown-linux-gnu
+#    - env: TARGET=s390x-unknown-linux-gnu
+#    - env: TARGET=sparc64-unknown-linux-gnu
+#    - env: TARGET=asmjs-unknown-emscripten
+#    - env: TARGET=wasm32-unknown-emscripten
+
+    # check formatting:
     - env: RUSTFMT=On TARGET=x86_64-unknown-linux-gnu NO_ADD=1
       script: |
         cargo install rustfmt-nightly
         cargo fmt --all -- --write-mode=diff
+
+    # check clippy:
     - env: CLIPPY=On TARGET=x86_64-unknown-linux-gnu NO_ADD=1
       script: |
         cargo install clippy
