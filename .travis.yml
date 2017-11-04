@@ -16,14 +16,16 @@ matrix:
     - env: TARGET=x86_64-unknown-linux-gnu-emulated NO_ADD=1 STDSIMD_TEST_EVERYTHING=1
     - os: osx
       env: TARGET=x86_64-apple-darwin NO_ADD=1
+      script: ci/run.sh
 #    - os: osx
 #      env: TARGET=i686-apple-darwin
+#      script: ci/run.sh
     - env: TARGET=arm-unknown-linux-gnueabihf
 #    - env: TARGET=arm-unknown-linux-musleabihf
     - env: TARGET=armv7-unknown-linux-gnueabihf
     - env: TARGET=aarch64-unknown-linux-gnu
 #    - env: TARGET=aarch64-unknown-linux-musl
-      script: ci/run.sh
+
 #    - os: osx
 #      osx_image: xcode8.2
 #      env: TARGET=i386-apple-ios
