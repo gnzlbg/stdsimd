@@ -7,13 +7,13 @@ mach=$2
 prog=$3
 
 cd /qemu/init
-cp -f $2 prog
+cp -f $prog prog
 find . | cpio --create --format='newc' --quiet | gzip > ../initrd.gz
 cd ..
 
 timeout 30s qemu-system-$arch \
         -m 1024 \
-        -M $3 \
+        -M $mach \
         -nographic \
         -kernel kernel \
         -initrd initrd.gz \
