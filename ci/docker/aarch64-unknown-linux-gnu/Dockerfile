@@ -15,5 +15,5 @@ COPY linux-aarch64.sh /
 RUN bash /linux-aarch64.sh
 
 ENV CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc \
-    CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER="qemu-system-aarch64 -L /usr/aarch64-linux-gnu" \
+    CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER="/test-runner-linux aarch64" \
     OBJDUMP=aarch64-linux-gnu-objdump

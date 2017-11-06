@@ -5,7 +5,7 @@ set -ex
 
 run() {
     echo $1
-    docker build -t stdsimd ci/docker/$1
+    docker build -t stdsimd -f ci/docker/$1/Dockerfile ci/
     mkdir -p target
     target=$(echo $1 | sed 's/-emulated//')
     docker run \
