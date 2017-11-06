@@ -13,7 +13,7 @@ cd ..
 
 timeout 30s qemu-system-$arch \
         -m 1024 \
-        -M $mach \
+        $mach \
         -nographic \
         -kernel kernel \
         -initrd initrd.gz \

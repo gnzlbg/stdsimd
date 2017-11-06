@@ -17,6 +17,6 @@ RUN bash /linux-aarch64.sh
 COPY test-runner-linux /
 
 ENV CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc \
-    CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER="/test-runner-linux aarch64 vexpress-a15" \
+    CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER="/test-runner-linux aarch64 \"-cpu cortex-a57 -machine type=virt\"" \
     PATH=$PATH:/rust/bin \
     OBJDUMP=aarch64-linux-gnu-objdump
