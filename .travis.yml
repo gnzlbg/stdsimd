@@ -7,12 +7,12 @@ matrix:
   include:
      - env: TARGET=aarch64-unknown-linux-gnu
        script: |
-       cargo generate-lockfile
-       cargo install --force --path .
-       cargo install cross
-       export QEMU_STRACE=1
-       cross test --target aarch64-unknown-linux-gnu
-       cross test --target aarch64-unknown-linux-gnu --release
+         cargo generate-lockfile
+         cargo install --force --path .
+         cargo install cross
+         export QEMU_STRACE=1
+         cross test --target aarch64-unknown-linux-gnu
+         cross test --target aarch64-unknown-linux-gnu --release
        
 #    - env: TARGET=i586-unknown-linux-gnu
 #    - env: TARGET=i686-unknown-linux-gnu
