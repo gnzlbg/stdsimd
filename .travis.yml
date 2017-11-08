@@ -2,26 +2,21 @@ language: rust
 sudo: false
 rust: nightly
 services: docker
+git:
+  depth: 1
+  submodules: false
 
 matrix:
   fast_finish: true
   include:
-    - env: TARGET=aarch64-unknown-linux-gnu
-      script: |
-        cargo generate-lockfile
-        cargo install --force --path .
-        cargo install cross
-        export OBJDUMP=aarch64-linux-gnu-objdump
-        cross test --target aarch64-unknown-linux-gnu --features "strict" -- --nocapture
-        cross test --target aarch64-unknown-linux-gnu --release --features "strict" -- --nocapture
-
+  #  - env: TARGET=aarch64-gnu
   #   - env: TARGET=i586-unknown-linux-gnu
   #   - env: TARGET=i686-unknown-linux-gnu
   #   - env: TARGET=x86_64-unknown-linux-gnu NO_ADD=1
   #   - env: TARGET=x86_64-unknown-linux-gnu-emulated NO_ADD=1 STDSIMD_TEST_EVERYTHING=1
   #   - env: TARGET=arm-unknown-linux-gnueabihf
   #   - env: TARGET=armv7-unknown-linux-gnueabihf
-  #   - env: TARGET=aarch64-unknown-linux-gnu
+    - env: TARGET=aarch64-unknown-linux-gnu
   #   - os: osx
   #     env: TARGET=x86_64-apple-darwin NO_ADD=1
   #     script: ci/run.sh
