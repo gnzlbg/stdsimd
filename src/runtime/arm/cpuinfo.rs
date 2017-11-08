@@ -211,7 +211,7 @@ power management:
     fn test_cpuinfo_linux_core_duo() {
         let cpuinfo = CpuInfo::from_str(CORE_DUO_T6500).unwrap();
         assert!(cpuinfo.field("vendor_id") == "GenuineIntel");
-        assert!(cpuinfo.field("family") == "6");
+        assert!(cpuinfo.field("cpu family") == "6");
         assert!(cpuinfo.field("model") == "23");
         assert!(
             cpuinfo.field("model name")
