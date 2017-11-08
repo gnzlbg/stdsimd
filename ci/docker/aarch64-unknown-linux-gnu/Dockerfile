@@ -38,8 +38,8 @@ COPY config /build/.config
 RUN curl https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.4.42.tar.xz | \
       tar xJf - && \
       cd /build/linux-4.4.42 && \
-      cp /build/.config . # && \
-RUN make -j$(nproc) all # && \
+      cp /build/.config . # && 
+RUN make -j$(nproc) all # && 
 RUN cp arch/arm64/boot/Image /tmp && \
       cd /build &&  \
       rm -rf linux-4.4.42
