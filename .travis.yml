@@ -12,8 +12,8 @@ matrix:
         cargo install --force --path .
         cargo install cross
         export OBJDUMP=aarch64-linux-gnu-objdump
-        cross test --target aarch64-unknown-linux-gnu --features "strict"
-        cross test --target aarch64-unknown-linux-gnu --release --features "strict"
+        cross test --target aarch64-unknown-linux-gnu --features "strict" -- --nocapture
+        cross test --target aarch64-unknown-linux-gnu --release --features "strict" -- --nocapture
 
   #   - env: TARGET=i586-unknown-linux-gnu
   #   - env: TARGET=i686-unknown-linux-gnu
