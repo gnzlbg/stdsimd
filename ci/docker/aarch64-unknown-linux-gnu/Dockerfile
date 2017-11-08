@@ -40,7 +40,7 @@ WORKDIR /build
 # followed by `make menuconfig` and then enabling the IPv6 protocol page.
 RUN pwd
 RUN ls
-COPY ci/docker/aarch64-unknown-linux-gnu/config /build/.config
+COPY docker/aarch64-unknown-linux-gnu/config /build/.config
 RUN curl https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.4.42.tar.xz | \
       tar xJf - && \
       cd /build/linux-4.4.42 && \
