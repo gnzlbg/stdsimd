@@ -110,36 +110,6 @@ clflush size    : 64
 cache_alignment : 64
 address sizes   : 36 bits physical, 48 bits virtual
 power management:
-
-processor       : 1
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 23
-model name      : Intel(R) Core(TM)2 Duo CPU     T6500  @ 2.10GHz
-stepping        : 10
-microcode       : 0xa0b
-cpu MHz         : 1200.000
-cache size      : 2048 KB
-physical id     : 0
-siblings        : 2
-core id         : 1
-cpu cores       : 2
-apicid          : 1
-initial apicid  : 1
-fdiv_bug        : no
-hlt_bug         : no
-f00f_bug        : no
-coma_bug        : no
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 13
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe nx lm constant_tsc arch_perfmon pebs bts aperfmperf pni dtes64 monitor ds_cpl est tm2 ssse3 cx16 xtpr pdcm sse4_1 xsave lahf_lm dtherm
-bogomips        : 4190.43
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 36 bits physical, 48 bits virtual
-power management:
 ";
 
     const XEON_5460: &str = r"processor	: 0
@@ -167,33 +137,26 @@ clflush size	: 64
 cache_alignment	: 64
 address sizes	: 38 bits physical, 48 bits virtual
 power management:
-
-processor	: 1
-vendor_id	: GenuineIntel
-cpu family	: 6
-model		: 23
-model name	: Intel(R) Xeon(R) CPU           X5460  @ 3.16GHz
-stepping	: 6
-microcode	: 0x60f
-cpu MHz		: 3158.785
-cache size	: 6144 KB
-physical id	: 1
-siblings	: 4
-core id		: 0
-cpu cores	: 4
-apicid		: 4
-initial apicid	: 4
-fpu		: yes
-fpu_exception	: yes
-cpuid level	: 10
-wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx lm constant_tsc arch_perfmon pebs bts rep_good nopl aperfmperf pni dtes64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm dca sse4_1 lahf_lm dtherm tpr_shadow vnmi flexpriority
-bogomips	: 6317.56
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 38 bits physical, 48 bits virtual
-power management:
 ";
+
+const ARM_CORTEX_A53: &str = r"Processor   : AArch64 Processor rev 3 (aarch64)
+        processor   : 0
+        processor   : 1
+        processor   : 2
+        processor   : 3
+        processor   : 4
+        processor   : 5
+        processor   : 6
+        processor   : 7
+        Features    : fp asimd evtstrm aes pmull sha1 sha2 crc32 
+        CPU implementer : 0x41
+        CPU architecture: AArch64
+        CPU variant : 0x0
+        CPU part    : 0xd03
+        CPU revision    : 3
+
+        Hardware    : HiKey Development Board
+        ";
 
     #[test]
     fn test_cpuinfo_linux() {
