@@ -3,4 +3,5 @@ passthrough = [
     "RUST_BACKTRACE",
     "RUST_LOG",
     "TRAVIS",
+    "OBJDUMP",
 ]
