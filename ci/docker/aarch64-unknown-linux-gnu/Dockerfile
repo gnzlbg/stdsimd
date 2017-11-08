@@ -20,7 +20,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
       qemu-system-aarch64 \
       xz-utils
 
-ENV ARCH=aarch64-unknown-linux-gnu \
+ENV ARCH=arm64 \
     CROSS_COMPILE=aarch64-linux-gnu- \
     OBJDUMP=aarch64-linux-gnu-objdump
 
@@ -38,12 +38,10 @@ COPY config /build/.config
 RUN curl https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.4.42.tar.xz | \
       tar xJf - && \
       cd /build/linux-4.4.42 && \
-      cp /build/.config . # &&
-RUN ls
-RUN pwd
-RUN make -j all # && 
-RUN cp arch/arm64/boot/Image /tmp && \
-      cd /build &&  \
+      cp /build/.config . && ls && pwd \
+      make -j all && \
+      cp arch/arm64/boot/Image /tmp && \
+      cd /build && \
       rm -rf linux-4.4.42
 
 # Compile an instance of busybox as this provides a lightweight system and init
