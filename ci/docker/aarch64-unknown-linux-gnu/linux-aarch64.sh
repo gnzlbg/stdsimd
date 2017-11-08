@@ -12,6 +12,7 @@ mv initrd.debian initrd.gz
 
 mkdir init
 cd init
+file ../initrd.gz
 gunzip -c ../initrd.gz | cpio -id
 rm ../initrd.gz
 ls /usr/
