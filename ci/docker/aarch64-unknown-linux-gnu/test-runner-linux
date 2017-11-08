@@ -3,6 +3,7 @@
 set -e
 
 cd /qemu/init
+echo "arg is: ${1}"
 cp -f $1 prog
 find . | cpio --create --format='newc' --quiet | gzip > ../initrd.gz
 cd ..
