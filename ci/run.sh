@@ -17,6 +17,6 @@ esac
 
 echo "RUSTFLAGS=${RUSTFLAGS}"
 
-cargo test --target $TARGET --features "strict" --verbose
-cargo test --release --target $TARGET --features "strict" --verbose
+cargo test --target $TARGET --features "strict" --verbose -- --nocapture
+cargo test --release --target $TARGET --features "strict" --verbose -- --nocapture
 cargo test cpuinfo --target $TARGET -- --nocapture --verbose
