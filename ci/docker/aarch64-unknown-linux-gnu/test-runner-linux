@@ -2,8 +2,6 @@
 
 set -e
 
-prog=$1
-
 cd /qemu/init
 cp -f $1 prog
 find . | cpio --create --format='newc' --quiet | gzip > ../initrd.gz
