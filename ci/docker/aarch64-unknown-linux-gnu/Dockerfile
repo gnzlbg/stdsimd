@@ -38,8 +38,10 @@ COPY config /build/.config
 RUN curl https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.4.42.tar.xz | \
       tar xJf - && \
       cd /build/linux-4.4.42 && \
-      cp /build/.config . # && 
-RUN make -j$(nproc) all # && 
+      cp /build/.config . # &&
+RUN ls
+RUN pwd
+RUN make -j all # && 
 RUN cp arch/arm64/boot/Image /tmp && \
       cd /build &&  \
       rm -rf linux-4.4.42
@@ -66,11 +68,11 @@ RUN curl http://cdimage.ubuntu.com/ubuntu-base/releases/16.04/release/ubuntu-bas
 
 # Copy over our init script, which starts up our test server and also a few
 # other misc tasks.
-COPY ci/qemu-bare-bones-rcS rootfs/etc/init.d/rcS
+COPY ../qemu-bare-bones-rcS rootfs/etc/init.d/rcS
 RUN chmod +x rootfs/etc/init.d/rcS
 
 # Helper to quickly fill the entropy pool in the kernel.
-COPY ci/qemu-bare-bones-addentropy.c /tmp/addentropy.c
+COPY ../qemu-bare-bones-addentropy.c /tmp/addentropy.c
 RUN aarch64-linux-gnu-gcc addentropy.c -o rootfs/addentropy -static
 
 ENV CARGO_TARGET_ARM_UNKNOWN_LINUX_GNUEABIHF_LINKER=aarch64-unknown-linux-gnu \
