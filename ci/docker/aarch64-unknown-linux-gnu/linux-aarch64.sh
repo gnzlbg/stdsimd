@@ -16,5 +16,5 @@ file ../initrd.gz
 gunzip -c ../initrd.gz | cpio -id
 rm ../initrd.gz
 ls /usr/
-cp /usr/arm64-linux-gnu/lib/libgcc_s.so.1 usr/lib/
+cp /usr/aarch64-linux-gnu/lib/libgcc_s.so.1 usr/lib/
 chmod a+w .
