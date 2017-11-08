@@ -24,6 +24,10 @@ ENV ARCH=aarch64-unknown-linux-gnu \
     CROSS_COMPILE=aarch64-linux-gnu- \
     OBJDUMP=aarch64-linux-gnu-objdump
 
+RUN pwd
+RUN ls
+
+
 WORKDIR /build
 
 # Compile the kernel that we're going to run and be emulating with. This is
