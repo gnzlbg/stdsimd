@@ -4,10 +4,10 @@ mkdir -m 777 /qemu
 cd /qemu
 
 #curl -LO https://github.com/qemu/qemu/raw/master/pc-bios/s390-ccw.img
-curl -LO http://ftp.debian.org/debian/dists/testing/main/installer-arm64/20170828/images/generic/kernel.debian
-curl -LO http://ftp.debian.org/debian/dists/testing/main/installer-arm64/20170828/images/generic/initrd.debian
+curl -LO http://ftp.debian.org/debian/dists/testing/main/installer-arm64/20170828/images/netboot/debian-installer/arm64/linux
+curl -LO http://ftp.debian.org/debian/dists/testing/main/installer-arm64/20170828/images/netboot/debian-installer/arm64/initrd.gz
 
-mv kernel.debian kernel
+mv linux kernel
 mv initrd.debian initrd.gz
 
 mkdir init
