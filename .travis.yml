@@ -1,6 +1,7 @@
 language: rust
 sudo: false
 rust: nightly
+services: docker
 
 matrix:
   fast_finish: true
