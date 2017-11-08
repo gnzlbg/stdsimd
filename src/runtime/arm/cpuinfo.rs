@@ -81,6 +81,19 @@ impl CpuInfo {
 mod tests {
     use super::*;
 
+    #[test]
+    fn test_cpuinfo_linux() {
+        let cpuinfo = CpuInfo::new().unwrap();
+        if cpuinfo.field("vendor_id") == "GenuineIntel" {
+            assert!(cpuinfo.field("flags").exists());
+            assert!(!cpuinfo.field("vendor33_id").exists());
+            assert!(cpuinfo.field("flags").has("sse"));
+            assert!(!cpuinfo.field("flags").has("avx314"));
+        }
+        println!("{}", cpuinfo.raw());
+    }
+
+
     const CORE_DUO_T6500: &str = r"processor       : 0
 vendor_id       : GenuineIntel
 cpu family      : 6
@@ -112,32 +125,25 @@ address sizes   : 36 bits physical, 48 bits virtual
 power management:
 ";
 
-    const XEON_5460: &str = r"processor	: 0
-vendor_id	: GenuineIntel
-cpu family	: 6
-model		: 23
-model name	: Intel(R) Xeon(R) CPU           X5460  @ 3.16GHz
-stepping	: 6
-microcode	: 0x60f
-cpu MHz		: 3158.785
-cache size	: 6144 KB
-physical id	: 0
-siblings	: 4
-core id		: 0
-cpu cores	: 4
-apicid		: 0
-initial apicid	: 0
-fpu		: yes
-fpu_exception	: yes
-cpuid level	: 10
-wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx lm constant_tsc arch_perfmon pebs bts rep_good nopl aperfmperf pni dtes64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm dca sse4_1 lahf_lm dtherm tpr_shadow vnmi flexpriority
-bogomips	: 6317.57
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 38 bits physical, 48 bits virtual
-power management:
-";
+    #[test]
+    fn test_cpuinfo_linux_core_duo_T6500() {
+        let cpuinfo = CpuInfo::from_str(CORE_DUO_T6500).unwrap();
+        assert!(cpuinfo.field("vendor_id") == "GenuineIntel");
+        assert!(cpuinfo.field("cpu family") == "6");
+        assert!(cpuinfo.field("model") == "23");
+        assert!(
+            cpuinfo.field("model name")
+                == "Intel(R) Core(TM)2 Duo CPU     T6500  @ 2.10GHz"
+        );
+        assert!(
+            cpuinfo.field("flags")
+                == "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe nx lm constant_tsc arch_perfmon pebs bts aperfmperf pni dtes64 monitor ds_cpl est tm2 ssse3 cx16 xtpr pdcm sse4_1 xsave lahf_lm dtherm"
+        );
+        assert!(cpuinfo.field("flags").has("fpu"));
+        assert!(cpuinfo.field("flags").has("dtherm"));
+        assert!(cpuinfo.field("flags").has("sse2"));
+        assert!(!cpuinfo.field("flags").has("avx"));
+    }
 
 const ARM_CORTEX_A53: &str = r"Processor   : AArch64 Processor rev 3 (aarch64)
         processor   : 0
@@ -159,34 +165,13 @@ const ARM_CORTEX_A53: &str = r"Processor   : AArch64 Processor rev 3 (aarch64)
         ";
 
     #[test]
-    fn test_cpuinfo_linux() {
-        let cpuinfo = CpuInfo::new().unwrap();
-        if cpuinfo.field("vendor_id") == "GenuineIntel" {
-            assert!(cpuinfo.field("flags").exists());
-            assert!(!cpuinfo.field("vendor33_id").exists());
-            assert!(cpuinfo.field("flags").has("sse"));
-            assert!(!cpuinfo.field("flags").has("avx314"));
-        }
-        println!("{}", cpuinfo.raw());
+    fn test_cpuinfo_linux_arm_cortex_A53() {
+        let cpuinfo = CpuInfo::from_str(ARM_CORTEX_A53).unwrap();
+        assert!(cpuinfo.field("Processor") == "AArch64 Processor rev 3 (aarch64)");
+        assert!(cpuinfo.field("Features") == "fp asimd evtstrm aes pmull sha1 sha2 crc32");
+        assert!(cpuinfo.field("Features").has("pmull"));
+        assert!(!cpuinfo.field("Features").has("neon"));
+        assert!(cpuinfo.field("Features").has("asimd"));
     }
 
-    #[test]
-    fn test_cpuinfo_linux_core_duo() {
-        let cpuinfo = CpuInfo::from_str(CORE_DUO_T6500).unwrap();
-        assert!(cpuinfo.field("vendor_id") == "GenuineIntel");
-        assert!(cpuinfo.field("cpu family") == "6");
-        assert!(cpuinfo.field("model") == "23");
-        assert!(
-            cpuinfo.field("model name")
-                == "Intel(R) Core(TM)2 Duo CPU     T6500  @ 2.10GHz"
-        );
-        assert!(
-            cpuinfo.field("flags")
-                == "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe nx lm constant_tsc arch_perfmon pebs bts aperfmperf pni dtes64 monitor ds_cpl est tm2 ssse3 cx16 xtpr pdcm sse4_1 xsave lahf_lm dtherm"
-        );
-        assert!(cpuinfo.field("flags").has("fpu"));
-        assert!(cpuinfo.field("flags").has("dtherm"));
-        assert!(cpuinfo.field("flags").has("sse2"));
-        assert!(!cpuinfo.field("flags").has("avx"));
-    }
 }

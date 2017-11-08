@@ -8,16 +8,16 @@ cp -f $1 prog
 find . | cpio --create --format='newc' --quiet | gzip > ../initrd.gz
 cd ..
 
-qemu-system-aarch64 \
+timeout 400s qemu-system-aarch64 \
   -m 1024 \
   -nographic \
   -kernel kernel \
   -initrd initrd.gz \
   -machine virt \
   -cpu cortex-a57 \
-  -append init=/prog > output || true
+  -append init="/prog ${@:2}" > output 2>&1 || true
 
 # remove kernel messages
 tr -d '\r' < output | egrep -v '^\['
 
-grep PASSED output > /dev/null
+! grep FAILED output > /dev/null
