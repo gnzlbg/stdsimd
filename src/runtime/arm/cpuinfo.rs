@@ -74,6 +74,17 @@ impl CpuInfo {
             raw: String::from(other),
         })
     }
+
+    fn bar() {
+        let cpuinfo = CpuInfo::new().unwrap();
+        if cpuinfo.field("vendor_id") == "GenuineIntel" {
+            assert!(cpuinfo.field("flags").exists());
+            assert!(!cpuinfo.field("vendor33_id").exists());
+            assert!(cpuinfo.field("flags").has("sse"));
+            assert!(!cpuinfo.field("flags").has("avx314"));
+        }
+        println!("{}", cpuinfo.raw());
+    }
 }
 
 #[cfg(target_os = "linux")]
