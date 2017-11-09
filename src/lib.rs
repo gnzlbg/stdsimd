@@ -153,7 +153,12 @@ pub mod vendor {
 
     #[cfg(target_arch = "aarch64")]
     pub use aarch64::*;
+
+    pub use runtime::{__unstable_detect_feature, __Feature};
 }
+
+#[macro_use]
+mod runtime;
 
 #[macro_use]
 mod macros;
@@ -170,7 +175,3 @@ mod x86;
 mod arm;
 #[cfg(target_arch = "aarch64")]
 mod aarch64;
-
-#[macro_use]
-mod runtime;
-pub use self::runtime::{__unstable_detect_feature, __Feature};

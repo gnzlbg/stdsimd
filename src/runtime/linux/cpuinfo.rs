@@ -1,7 +1,5 @@
 //! Reads /proc/cpuinfo on Linux systems
 
-use super::{__Feature, FeatureQuery};
-
 /// cpuinfo
 pub struct CpuInfo {
     raw: String,
@@ -60,7 +58,7 @@ impl CpuInfo {
     /// Returns the value of the cpuinfo `field`.
     pub fn field(&self, field: &str) -> CpuInfoField {
         for l in self.raw.lines() {
-            if l.starts_with(field) {
+            if l.trim().starts_with(field) {
                 return CpuInfoField(l.split(": ").skip(1).next());
             }
         }
@@ -76,28 +74,6 @@ impl CpuInfo {
         Ok(CpuInfo {
             raw: String::from(other),
         })
-    }
-}
-
-/// Is the CPU known to have a broken NEON unit?
-///
-/// See https://crbug.com/341598.
-fn has_broken_neon(cpuinfo: &CpuInfo) -> bool {
-    cpuinfo.field("CPU implementer") == "0x51"
-        && cpuinfo.field("CPU architecture") == "7"
-        && cpuinfo.field("CPU variant") == "0x1"
-        && cpuinfo.field("CPU part") == "0x04d"
-        && cpuinfo.field("CPU revision") == "0"
-}
-
-impl FeatureQuery for CpuInfo {
-    fn has_feature(&mut self, x: &__Feature) -> bool {
-        use __Feature::*;
-        match *x {
-            neon => self.field("Features").has("neon") && !has_broken_neon(self),
-            asimd => self.field("Features").has("asimd") && !has_broken_neon(self),
-            pmull => self.field("Features").has("pmull"),
-        }
     }
 }
 

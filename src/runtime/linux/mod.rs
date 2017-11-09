@@ -1,25 +1,22 @@
 //! Run-time feature detection for ARM on linux
 mod cpuinfo;
+pub use self::cpuinfo::CpuInfo;
 
-use super::{__Feature, bit};
+use super::{__Feature};
 
-trait FeatureQuery {
+pub trait FeatureQuery {
     fn has_feature(&mut self, x: &__Feature) -> bool;
 }
 
-fn detect_features_impl<T: FeatureQuery>(mut x: T) -> usize {
-    let value: usize = 0;
+fn detect_features_impl<T: FeatureQuery>(x: T) -> usize {
+    #[cfg(target_arch = "arm")]
     {
-        let mut enable_feature = | f | {
-            if x.has_feature(&f) {
-                bit::set(value, f as u32);
-            }
-        };
-        enable_feature(__Feature::neon);
-        enable_feature(__Feature::asimd);
-        enable_feature(__Feature::pmull);
+        super::arm::detect_features(x)
     }
-    value
+    #[cfg(target_arch = "aarch64")]
+    {
+        super::aarch64::detect_features(x)
+    }
 }
 
 /// Detects ARM features:

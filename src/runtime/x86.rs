@@ -273,3 +273,4 @@ mod tests {
         println!("fma: {:?}", cfg_feature_enabled!("fma"));
     }
 }
+

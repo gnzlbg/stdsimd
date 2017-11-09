@@ -1,31 +1,7 @@
 //! getauxval
 
-use super::cpuinfo;
-
 /// Obtain auxval from libc's getauxval
 mod libc {
-    extern "C" {
-        #[linkage = "extern_weak"]
-        fn getauxval(usize) -> usize;
-    }
-
-
-    struct Auxv {
-        hwcap_16: usize,
-        hwcap_26: usize,
-    }
-
-    impl Auxv {
-        fn new() -> Option<Auxv> {
-            if getauxval as fn(usize) -> usize != 0 {
-                return Some(Auxv {
-                    hwcap_16: getauxval(16),
-                    hwcap_26: getauxval(26)
-                });
-            }
-            None
-        }
-    }
 }
 
 mod auxv {
