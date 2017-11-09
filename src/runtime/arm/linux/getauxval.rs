@@ -2,6 +2,18 @@
 
 use super::cpuinfo;
 
+/*
+// If linked against a libc that provides getauxval, use that:
+if libc::getauxval as fn(usize) -> usize != 0 {
+return detect_features_impl(libc::Auxval::new());
+    }
+    // Otherwise try to read /proc/auxv
+    if let Ok(v) = proc::Auxval::new() {
+        return detect_features_impl(v);
+    }
+    */
+
+
 pub mod hwcap {
     pub const NEON: usize = 1 << 12;
     pub const AT: usize = 16;

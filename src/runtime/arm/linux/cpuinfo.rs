@@ -8,6 +8,7 @@ pub struct CpuInfo {
 }
 
 /// Field of cpuinfo
+#[derive(Debug)]
 pub struct CpuInfoField<'a>(Option<&'a str>);
 
 impl<'a> PartialEq<&'a str> for CpuInfoField<'a> {
