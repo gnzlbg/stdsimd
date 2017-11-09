@@ -126,7 +126,7 @@ power management:
 ";
 
     #[test]
-    fn test_cpuinfo_linux_core_duo_T6500() {
+    fn test_cpuinfo_linux_core_duo_t6500() {
         let cpuinfo = CpuInfo::from_str(CORE_DUO_T6500).unwrap();
         assert!(cpuinfo.field("vendor_id") == "GenuineIntel");
         assert!(cpuinfo.field("cpu family") == "6");
@@ -165,7 +165,7 @@ const ARM_CORTEX_A53: &str = r"Processor   : AArch64 Processor rev 3 (aarch64)
         ";
 
     #[test]
-    fn test_cpuinfo_linux_arm_cortex_A53() {
+    fn test_cpuinfo_linux_arm_cortex_a53() {
         let cpuinfo = CpuInfo::from_str(ARM_CORTEX_A53).unwrap();
         assert!(cpuinfo.field("Processor") == "AArch64 Processor rev 3 (aarch64)");
         assert!(cpuinfo.field("Features") == "fp asimd evtstrm aes pmull sha1 sha2 crc32");
