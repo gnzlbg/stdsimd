@@ -1,13 +1,14 @@
 //! Run-time feature detection on arm-like architectures.
-mod getauxval;
-mod cpuinfo;
+use super::bit;
 
-#[cfg(target_arch = "arm")]
 #[macro_export]
 #[doc(hidden)]
 macro_rules! __unstable_detect_feature {
     ("neon") => {
         $crate::vendor::__unstable_detect_feature($crate::vendor::__Feature::neon{})
+    };
+    ("asimd") => {
+        $crate::vendor::__unstable_detect_feature($crate::vendor::__Feature::asimd{})
     };
     ("pmull") => {
         $crate::vendor::__unstable_detect_feature($crate::vendor::__Feature::pmull{})
@@ -23,26 +24,15 @@ macro_rules! __unstable_detect_feature {
 #[allow(non_camel_case_types)]
 #[repr(u8)]
 pub enum __Feature {
-    /// Advanced SIMD Extension (NEON)
+    /// ARM Advanced SIMD (NEON) - Aarch32
     neon,
+    /// ARM Advanced SIMD (ASIMD) - Aarch64
+    asimd,
     /// Polynomial Multiply
     pmull,
 }
 
-pub fn detect_features() -> usize {
-    use self::getauxval::{getauxval, hwcap, hwcap2};
-    use super::bit;
-
-    let value: usize = 0;
-    let hwcap = getauxval(hwcap::AT);
-    let hwcap2 = getauxval(hwcap2::AT);
-
-    if bit::test(hwcap, hwcap::NEON as u32) {
-        bit::set(value, __Feature::neon as u32);
-    }
-    if bit::test(hwcap2, hwcap2::PMULL as u32) {
-        bit::set(value, __Feature::pmull as u32);
-    }
-    value
-}
-
+#[cfg(target_os = "linux")]
+mod linux;
+#[cfg(target_os = "linux")]
+pub use self::linux::detect_features;

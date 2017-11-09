@@ -1,5 +1,7 @@
 //! Reads /proc/cpuinfo on Linux systems
 
+use super::{__Feature, FeatureQuery};
+
 /// cpuinfo
 pub struct CpuInfo {
     raw: String,
@@ -76,11 +78,22 @@ impl CpuInfo {
     }
 }
 
-#[cfg(target_os = "linux")]
+impl FeatureQuery for CpuInfo {
+    fn has_feature(&mut self, x: &__Feature) -> bool {
+        use __Feature::*;
+        match *x {
+            neon => self.field("Features").has("neon"),
+            asimd => self.field("Features").has("asimd"),
+            pmull => self.field("Features").has("pmull"),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    #[cfg(target_os = "linux")]
     #[test]
     fn test_cpuinfo_linux() {
         let cpuinfo = CpuInfo::new().unwrap();
@@ -128,16 +141,16 @@ power management:
     #[test]
     fn test_cpuinfo_linux_core_duo_t6500() {
         let cpuinfo = CpuInfo::from_str(CORE_DUO_T6500).unwrap();
-        assert!(cpuinfo.field("vendor_id") == "GenuineIntel");
-        assert!(cpuinfo.field("cpu family") == "6");
-        assert!(cpuinfo.field("model") == "23");
-        assert!(
+        assert_eq!(cpuinfo.field("vendor_id"), "GenuineIntel");
+        assert_eq!(cpuinfo.field("cpu family"), "6");
+        assert_eq!(cpuinfo.field("model"), "23");
+        assert_eq!(
             cpuinfo.field("model name")
-                == "Intel(R) Core(TM)2 Duo CPU     T6500  @ 2.10GHz"
+                , "Intel(R) Core(TM)2 Duo CPU     T6500  @ 2.10GHz"
         );
-        assert!(
+        assert_eq!(
             cpuinfo.field("flags")
-                == "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe nx lm constant_tsc arch_perfmon pebs bts aperfmperf pni dtes64 monitor ds_cpl est tm2 ssse3 cx16 xtpr pdcm sse4_1 xsave lahf_lm dtherm"
+                , "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe nx lm constant_tsc arch_perfmon pebs bts aperfmperf pni dtes64 monitor ds_cpl est tm2 ssse3 cx16 xtpr pdcm sse4_1 xsave lahf_lm dtherm"
         );
         assert!(cpuinfo.field("flags").has("fpu"));
         assert!(cpuinfo.field("flags").has("dtherm"));
@@ -154,7 +167,7 @@ const ARM_CORTEX_A53: &str = r"Processor   : AArch64 Processor rev 3 (aarch64)
         processor   : 5
         processor   : 6
         processor   : 7
-        Features    : fp asimd evtstrm aes pmull sha1 sha2 crc32 
+        Features    : fp asimd evtstrm aes pmull sha1 sha2 crc32
         CPU implementer : 0x41
         CPU architecture: AArch64
         CPU variant : 0x0
@@ -167,11 +180,32 @@ const ARM_CORTEX_A53: &str = r"Processor   : AArch64 Processor rev 3 (aarch64)
     #[test]
     fn test_cpuinfo_linux_arm_cortex_a53() {
         let cpuinfo = CpuInfo::from_str(ARM_CORTEX_A53).unwrap();
-        assert!(cpuinfo.field("Processor") == "AArch64 Processor rev 3 (aarch64)");
-        assert!(cpuinfo.field("Features") == "fp asimd evtstrm aes pmull sha1 sha2 crc32");
+        assert_eq!(cpuinfo.field("Processor"), "AArch64 Processor rev 3 (aarch64)");
+        assert_eq!(cpuinfo.field("Features"), "fp asimd evtstrm aes pmull sha1 sha2 crc32");
         assert!(cpuinfo.field("Features").has("pmull"));
         assert!(!cpuinfo.field("Features").has("neon"));
         assert!(cpuinfo.field("Features").has("asimd"));
     }
 
+    const ARM_CORTEX_A57: &srt = r"Processor	: Cortex A57 Processor rev 1 (aarch64)
+processor	: 0
+processor	: 1
+processor	: 2
+processor	: 3
+Features	: fp asimd aes pmull sha1 sha2 crc32 wp half thumb fastmult vfp edsp neon vfpv3 tlsi vfpv4 idiva idivt
+CPU implementer	: 0x41
+CPU architecture: 8
+CPU variant	: 0x1
+CPU part	: 0xd07
+CPU revision	: 1";
+
+    #[test]
+    fn test_cpuinfo_linux_arm_cortex_a57() {
+        let cpuinfo = CpuInfo::from_str(ARM_CORTEX_A53).unwrap();
+        assert_eq!(cpuinfo.field("Processor"), "Cortex A57 Processor rev 1 (aarch64)");
+        assert_eq!(cpuinfo.field("Features"), "fp asimd aes pmull sha1 sha2 crc32 wp half thumb fastmult vfp edsp neon vfpv3 tlsi vfpv4 idiva idivt");
+        assert!(cpuinfo.field("Features").has("pmull"));
+        assert!(cpuinfo.field("Features").has("neon"));
+        assert!(cpuinfo.field("Features").has("asimd"));
+    }
 }
