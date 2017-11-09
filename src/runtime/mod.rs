@@ -25,7 +25,7 @@ mod aarch64;
 #[cfg(target_arch = "aarch64")]
 pub use self::aarch64::__Feature;
 
-//#[cfg(all(target_os = "linux", any(target_arch = "arm", target_arch = "aarch64")))]
+#[cfg(all(target_os = "linux", any(target_arch = "arm", target_arch = "aarch64")))]
 mod linux;
 
 #[cfg(all(target_os = "linux", any(target_arch = "arm", target_arch = "aarch64")))]
