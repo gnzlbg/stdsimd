@@ -2,6 +2,12 @@
 
 use super::cpuinfo;
 
+pub struct Auxv {
+    hwcap_16: usize,
+    hwcap_26: usize,
+}
+
+
 /*
 // If linked against a libc that provides getauxval, use that:
 if libc::getauxval as fn(usize) -> usize != 0 {
@@ -29,16 +35,6 @@ mod auxv_cpuinfo {
     use super::cpuinfo::CpuInfo;
     use super::{hwcap, hwcap2};
 
-    /// Is the CPU known to have a broken NEON unit?
-    ///
-    /// See https://crbug.com/341598.
-    fn has_broken_neon(cpuinfo: &CpuInfo) -> bool {
-        cpuinfo.field("CPU implementer") == "0x51"
-            && cpuinfo.field("CPU architecture") == "7"
-            && cpuinfo.field("CPU variant") == "0x1"
-            && cpuinfo.field("CPU part") == "0x04d"
-            && cpuinfo.field("CPU revision") == "0"
-    }
 
     /// Emulates `getauxval` using `/proc/cpuinfo`
     pub fn getauxval(t: usize) -> Result<usize, ::std::io::Error> {

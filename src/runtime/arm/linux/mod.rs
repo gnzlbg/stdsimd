@@ -24,7 +24,8 @@ fn detect_features_impl<T: FeatureQuery>(mut x: T) -> usize {
 
 /// Detects ARM features:
 pub fn detect_features() -> usize {
-    // Otherwise try to read /proc/cpuinfo
+    // FIXME: use libc::getauxval, and if that fails /proc/auxv
+    // Try to read /proc/cpuinfo
     if let Ok(v) = cpuinfo::CpuInfo::new() {
         return detect_features_impl(v);
     }

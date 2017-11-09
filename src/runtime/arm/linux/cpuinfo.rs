@@ -79,12 +79,23 @@ impl CpuInfo {
     }
 }
 
+/// Is the CPU known to have a broken NEON unit?
+///
+/// See https://crbug.com/341598.
+fn has_broken_neon(cpuinfo: &CpuInfo) -> bool {
+    cpuinfo.field("CPU implementer") == "0x51"
+        && cpuinfo.field("CPU architecture") == "7"
+        && cpuinfo.field("CPU variant") == "0x1"
+        && cpuinfo.field("CPU part") == "0x04d"
+        && cpuinfo.field("CPU revision") == "0"
+}
+
 impl FeatureQuery for CpuInfo {
     fn has_feature(&mut self, x: &__Feature) -> bool {
         use __Feature::*;
         match *x {
-            neon => self.field("Features").has("neon"),
-            asimd => self.field("Features").has("asimd"),
+            neon => self.field("Features").has("neon") && !has_broken_neon(self),
+            asimd => self.field("Features").has("asimd") && !has_broken_neon(self),
             pmull => self.field("Features").has("pmull"),
         }
     }
@@ -188,7 +199,7 @@ const ARM_CORTEX_A53: &str = r"Processor   : AArch64 Processor rev 3 (aarch64)
         assert!(cpuinfo.field("Features").has("asimd"));
     }
 
-    const ARM_CORTEX_A57: &srt = r"Processor	: Cortex A57 Processor rev 1 (aarch64)
+    const ARM_CORTEX_A57: &str = r"Processor	: Cortex A57 Processor rev 1 (aarch64)
 processor	: 0
 processor	: 1
 processor	: 2
