@@ -8,7 +8,7 @@ cp -f $1 prog
 find . | cpio --create --format='newc' --quiet | gzip > ../initrd.gz
 cd ..
 
-timeout 180s qemu-system-aarch64 \
+timeout 60s qemu-system-aarch64 \
   -m 1024 \
   -nographic \
   -kernel kernel \
