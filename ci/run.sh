@@ -19,6 +19,7 @@ echo "RUSTFLAGS=${RUSTFLAGS}"
 echo "OBJDUMP=${OBJDUMP}"
 echo "which objdump: "
 which objdump || true
+OBJDUMP=objdump
 
 cargo test --target $TARGET --features "strict" --verbose -- --nocapture
 cargo test --release --target $TARGET --features "strict" --verbose -- --nocapture
