@@ -213,7 +213,7 @@ CPU revision	: 1";
 
     #[test]
     fn test_cpuinfo_linux_arm_cortex_a57() {
-        let cpuinfo = CpuInfo::from_str(ARM_CORTEX_A53).unwrap();
+        let cpuinfo = CpuInfo::from_str(ARM_CORTEX_A57).unwrap();
         assert_eq!(cpuinfo.field("Processor"), "Cortex A57 Processor rev 1 (aarch64)");
         assert_eq!(cpuinfo.field("Features"), "fp asimd aes pmull sha1 sha2 crc32 wp half thumb fastmult vfp edsp neon vfpv3 tlsi vfpv4 idiva idivt");
         assert!(cpuinfo.field("Features").has("pmull"));

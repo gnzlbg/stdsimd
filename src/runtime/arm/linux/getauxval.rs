@@ -2,11 +2,61 @@
 
 use super::cpuinfo;
 
+/// Obtain auxval from libc's getauxval
+mod libc {
+    extern "C" {
+        #[linkage = "extern_weak"]
+        fn getauxval(usize) -> usize;
+    }
+
+
+    struct Auxv {
+        hwcap_16: usize,
+        hwcap_26: usize,
+    }
+
+    impl Auxv {
+        fn new() -> Option<Auxv> {
+            if getauxval as fn(usize) -> usize != 0 {
+                return Some(Auxv {
+                    hwcap_16: getauxval(16),
+                    hwcap_26: getauxval(26)
+                });
+            }
+            None
+        }
+    }
+}
+
+mod auxv {
+    
+}
+
+fn getauxval(t: usize) -> usize {
+    if libc::getauxval as fn(usize) -> usize != 0 {
+        return libc::getauxval(t);
+    }
+    if let Ok(v) = proc::getauxval(t) {
+        return t;
+    }
+    if let Ok(v) = auxv_cpuinfo::getauxval(t) {
+        return t;
+    }
+    0
+}
+
+
+
 pub struct Auxv {
     hwcap_16: usize,
     hwcap_26: usize,
 }
 
+impl Auxv {
+    fn new() -> Auxv {
+        
+    }
+}
 
 /*
 // If linked against a libc that provides getauxval, use that:
@@ -89,13 +139,6 @@ mod proc {
     }
 }
 
-/// Obtain auxval from libc's getauxval
-mod libc {
-    extern "C" {
-        #[linkage = "extern_weak"]
-        fn getauxval(usize) -> usize;
-    }
-}
 
 fn getauxval(t: usize) -> usize {
     if libc::getauxval as fn(usize) -> usize != 0 {
