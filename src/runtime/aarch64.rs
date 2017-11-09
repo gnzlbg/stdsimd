@@ -4,6 +4,10 @@ use super::{bit, linux};
 #[macro_export]
 #[doc(hidden)]
 macro_rules! __unstable_detect_feature {
+    ("neon") => {
+        // FIXME: this should be removed once we rename Aarch64 neon to asimd
+        $crate::vendor::__unstable_detect_feature($crate::vendor::__Feature::asimd{})
+    };
     ("asimd") => {
         $crate::vendor::__unstable_detect_feature($crate::vendor::__Feature::asimd{})
     };

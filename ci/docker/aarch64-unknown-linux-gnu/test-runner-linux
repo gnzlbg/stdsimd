@@ -8,14 +8,21 @@ cp -f $1 prog
 find . | cpio --create --format='newc' --quiet | gzip > ../initrd.gz
 cd ..
 
+mkdir bin
+cp $OBJDUMP bin/
+
 timeout 60s qemu-system-aarch64 \
   -m 1024 \
+  -smp 1 \
+  -machine virt \
+  -cpu cortex-a57 \
   -nographic \
   -kernel kernel \
   -initrd initrd.gz \
-  -machine virt \
-  -cpu cortex-a57 \
-  -append init="/prog ${@:2}" > output 2>&1 || true
+  --append "console=ttyAMA0" \
+  -fsdev local,id=r,path=/qemu/bin,security_model=none \
+  -device virtio-9p-device,fsdev=r,mount_tag=r \
+  -append init="mount -t 9p -o trans=virtio r /mnt && export PATH=/mnt/bin:$PATH && /prog ${@:2}" > output 2>&1 || true
 
 # remove kernel messages
 tr -d '\r' < output | egrep -v '^\['
