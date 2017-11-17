@@ -351,10 +351,13 @@ macro_rules! assert_approx_eq {
     })
 }
 
-macro_rules! not_i586 {
+// i686 targets and up:
+macro_rules! i686 {
     ($i:item) => (
-        #[cfg(all(target_arch = "x86_64",
-                  not(target_feature = "sse2")))]
+        #[cfg(not(
+            // i586:
+            all(target_arch = "x86", not(target_feature = "sse2"))
+        ))]
         $i
     )
 }

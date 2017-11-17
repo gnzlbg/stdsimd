@@ -635,7 +635,7 @@ pub unsafe fn _mm_cvt_ss2si(a: f32x4) -> i32 {
 /// [`_mm_setcsr`](fn._mm_setcsr.html)).
 ///
 /// This corresponds to the `CVTSS2SI` instruction (with 64 bit output).
-not_i586!(
+i686!(
 #[inline(always)]
 #[target_feature = "+sse"]
 #[cfg_attr(test, assert_instr(cvtss2si))]
@@ -682,7 +682,7 @@ pub unsafe fn _mm_cvtt_ss2si(a: f32x4) -> i32 {
 /// point exception if unmasked (see [`_mm_setcsr`](fn._mm_setcsr.html)).
 ///
 /// This corresponds to the `CVTTSS2SI` instruction (with 64 bit output).
-not_i586!(
+i686!(
 #[inline(always)]
 #[target_feature = "+sse"]
 #[cfg_attr(test, assert_instr(cvttss2si))]
@@ -731,7 +731,7 @@ pub unsafe fn _mm_cvt_si2ss(a: f32x4, b: i32) -> f32x4 {
 ///
 /// This intrinsic corresponds to the `CVTSI2SS` instruction (with 64 bit
 /// input).
-not_i586!(
+i686!(
 #[inline(always)]
 #[target_feature = "+sse"]
 #[cfg_attr(all(test, target_os = "macos"), assert_instr(cvtsi2ssq))]
@@ -1735,8 +1735,8 @@ extern "C" {
     fn cmpss(a: f32x4, b: f32x4, imm8: i8) -> f32x4;
 }
 
-not_i586!(
-mod i686 {
+i686!(
+mod i686_ {
     #[allow(improper_ctypes)]
     extern "C" {
         #[link_name = "llvm.x86.sse.cvtss2si64"]
@@ -1746,7 +1746,7 @@ mod i686 {
     }
 }
 );
-not_i586!(use i686::*; );
+i686!(use i686_::*;);
 
 #[cfg(test)]
 mod tests {
@@ -2869,7 +2869,7 @@ mod tests {
         }
     }
 
-    not_i586!(
+    i686!(
     #[simd_test = "sse"]
     unsafe fn _mm_cvtss_si64() {
         use std::f32::NAN;
@@ -2934,7 +2934,7 @@ mod tests {
         }
     }
 
-    not_i586!(
+    i686!(
     #[simd_test = "sse"]
     unsafe fn _mm_cvttss_si64() {
         use std::f32::NAN;
@@ -2997,7 +2997,7 @@ mod tests {
         }
     }
 
-    not_i586!(
+    i686!(
     #[simd_test = "sse"]
     pub unsafe fn _mm_cvtsi64_ss() {
         let inputs = &[
