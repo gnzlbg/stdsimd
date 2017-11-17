@@ -635,13 +635,14 @@ pub unsafe fn _mm_cvt_ss2si(a: f32x4) -> i32 {
 /// [`_mm_setcsr`](fn._mm_setcsr.html)).
 ///
 /// This corresponds to the `CVTSS2SI` instruction (with 64 bit output).
+not_i586!(
 #[inline(always)]
 #[target_feature = "+sse"]
 #[cfg_attr(test, assert_instr(cvtss2si))]
-#[cfg(target_arch = "x86_64")]
 pub unsafe fn _mm_cvtss_si64(a: f32x4) -> i64 {
     cvtss2si64(a)
 }
+);
 
 // Blocked by https://github.com/rust-lang-nursery/stdsimd/issues/74
 // pub unsafe fn _mm_cvtps_pi32(a: f32x4) -> i32x2
@@ -681,13 +682,14 @@ pub unsafe fn _mm_cvtt_ss2si(a: f32x4) -> i32 {
 /// point exception if unmasked (see [`_mm_setcsr`](fn._mm_setcsr.html)).
 ///
 /// This corresponds to the `CVTTSS2SI` instruction (with 64 bit output).
+not_i586!(
 #[inline(always)]
 #[target_feature = "+sse"]
 #[cfg_attr(test, assert_instr(cvttss2si))]
-#[cfg(target_arch = "x86_64")]
 pub unsafe fn _mm_cvttss_si64(a: f32x4) -> i64 {
     cvttss2si64(a)
 }
+);
 
 // Blocked by https://github.com/rust-lang-nursery/stdsimd/issues/74
 // pub unsafe fn _mm_cvttps_pi32(a: f32x4) -> i32x2;
@@ -729,14 +731,15 @@ pub unsafe fn _mm_cvt_si2ss(a: f32x4, b: i32) -> f32x4 {
 ///
 /// This intrinsic corresponds to the `CVTSI2SS` instruction (with 64 bit
 /// input).
+not_i586!(
 #[inline(always)]
 #[target_feature = "+sse"]
 #[cfg_attr(all(test, target_os = "macos"), assert_instr(cvtsi2ssq))]
 #[cfg_attr(all(test, not(target_os = "macos")), assert_instr(cvtsi2ss))]
-#[cfg(target_arch = "x86_64")]
 pub unsafe fn _mm_cvtsi64_ss(a: f32x4, b: i64) -> f32x4 {
     a.replace(0, b as f32)
 }
+);
 
 // Blocked by https://github.com/rust-lang-nursery/stdsimd/issues/74
 // pub unsafe fn _mm_cvtpi32_ps(a: f32x4, b: i32x2) -> f32x4
@@ -2859,8 +2862,8 @@ mod tests {
         }
     }
 
+    not_i586!(
     #[simd_test = "sse"]
-    #[cfg(target_arch = "x86_64")]
     unsafe fn _mm_cvtss_si64() {
         use std::f32::NAN;
         use std::i64::MIN;
@@ -2890,6 +2893,7 @@ mod tests {
             );
         }
     }
+    );
 
     #[simd_test = "sse"]
     unsafe fn _mm_cvttss_si32() {
@@ -2923,8 +2927,8 @@ mod tests {
         }
     }
 
+    not_i586!(
     #[simd_test = "sse"]
-    #[cfg(target_arch = "x86_64")]
     unsafe fn _mm_cvttss_si64() {
         use std::f32::NAN;
         use std::i64::MIN;
@@ -2957,6 +2961,7 @@ mod tests {
             );
         }
     }
+    );
 
     #[simd_test = "sse"]
     pub unsafe fn _mm_cvtsi32_ss() {
@@ -2985,8 +2990,8 @@ mod tests {
         }
     }
 
+    not_i586!(
     #[simd_test = "sse"]
-    #[cfg(target_arch = "x86_64")]
     pub unsafe fn _mm_cvtsi64_ss() {
         let inputs = &[
             (4555i64, 4555.0f32),
@@ -3014,6 +3019,7 @@ mod tests {
             );
         }
     }
+    );
 
     #[simd_test = "sse"]
     pub unsafe fn _mm_cvtss_f32() {
