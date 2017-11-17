@@ -1736,7 +1736,7 @@ extern "C" {
 }
 
 i686!(
-mod i686_ {
+mod i686 {
     #[allow(improper_ctypes)]
     extern "C" {
         #[link_name = "llvm.x86.sse.cvtss2si64"]
