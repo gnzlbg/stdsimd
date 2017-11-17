@@ -1746,7 +1746,7 @@ mod i686_ {
     }
 }
 );
-i686!(use i686_::*;);
+i686!(use i686::*;);
 
 #[cfg(test)]
 mod tests {
