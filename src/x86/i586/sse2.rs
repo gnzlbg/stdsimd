@@ -2247,7 +2247,8 @@ mod tests {
     use test::black_box; // Used to inhibit constant-folding.
 
     use v128::*;
-    use x86::{__m128i, sse2};
+    use x86::__m128i;
+    use x86::i586::sse2;
 
     #[simd_test = "sse2"]
     unsafe fn _mm_pause() {

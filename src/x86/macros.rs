@@ -350,14 +350,3 @@ macro_rules! assert_approx_eq {
                  *a, *b, $eps, (*a - *b).abs());
     })
 }
-
-// i686 targets and up:
-macro_rules! i686 {
-    ($i:item) => (
-        #[cfg(not(
-            // i586:
-            all(target_arch = "x86", not(target_feature = "sse2"))
-        ))]
-        $i
-    )
-}

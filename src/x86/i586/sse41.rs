@@ -673,7 +673,7 @@ mod tests {
     use stdsimd_test::simd_test;
 
     use v128::*;
-    use x86::sse41;
+    use x86::i586::sse41;
 
     #[simd_test = "sse4.1"]
     unsafe fn _mm_blendv_epi8() {
@@ -1123,7 +1123,7 @@ mod tests {
 
     #[simd_test = "sse4.1"]
     unsafe fn _mm_round_sd() {
-        use x86::sse;
+        use x86::i586::sse;
         let a = f64x2::new(1.5, 3.5);
         let b = f64x2::new(-2.5, -4.5);
         let old_mode = sse::_MM_GET_ROUNDING_MODE();
@@ -1136,7 +1136,7 @@ mod tests {
 
     #[simd_test = "sse4.1"]
     unsafe fn _mm_round_ss() {
-        use x86::sse;
+        use x86::i586::sse;
         let a = f32x4::new(1.5, 3.5, 7.5, 15.5);
         let b = f32x4::new(-1.75, -4.5, -8.5, -16.5);
         let old_mode = sse::_MM_GET_ROUNDING_MODE();

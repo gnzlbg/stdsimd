@@ -1,21 +1,5 @@
 //! `x86` and `x86_64` intrinsics.
 
-pub use self::sse::*;
-pub use self::sse2::*;
-pub use self::sse3::*;
-pub use self::ssse3::*;
-pub use self::sse41::*;
-pub use self::sse42::*;
-pub use self::avx::*;
-pub use self::avx2::*;
-
-pub use self::abm::*;
-pub use self::bmi::*;
-pub use self::bmi2::*;
-pub use self::tbm::*;
-
-pub use self::runtime::{__unstable_detect_feature, __Feature};
-
 /// 128-bit wide signed integer vector type
 #[allow(non_camel_case_types)]
 pub type __m128i = ::v128::i8x16;
@@ -25,19 +9,23 @@ pub type __m256i = ::v256::i8x32;
 
 #[macro_use]
 mod macros;
+
 #[macro_use]
 mod runtime;
 
-mod sse;
-mod sse2;
-mod sse3;
-mod ssse3;
-mod sse41;
-mod sse42;
-mod avx;
-mod avx2;
+pub use self::runtime::{__unstable_detect_feature, __Feature};
 
-mod abm;
-mod bmi;
-mod bmi2;
-mod tbm;
+mod i586;
+pub use self::i586::*;
+
+// i686: either x86_64, or all x86 targets that have SSE2
+#[cfg(any(
+    target_arch = "x86_64",
+    all(target_arch = "x86", target_feature = "sse2")
+))]
+mod i686;
+#[cfg(any(
+    target_arch = "x86_64",
+    all(target_arch = "x86", target_feature = "sse2")
+))]
+pub use self::i686::*;

@@ -634,7 +634,8 @@ mod tests {
 
     use std::ptr;
     use v128::*;
-    use x86::{__m128i, sse42};
+    use x86::__m128i;
+    use x86::i586::sse42;
 
     // Currently one cannot `load` a &[u8] that is is less than 16
     // in length. This makes loading strings less than 16 in length
