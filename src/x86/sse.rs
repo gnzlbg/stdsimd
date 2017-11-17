@@ -1721,14 +1721,8 @@ extern "C" {
     fn ucomineq_ss(a: f32x4, b: f32x4) -> i32;
     #[link_name = "llvm.x86.sse.cvtss2si"]
     fn cvtss2si(a: f32x4) -> i32;
-    #[link_name = "llvm.x86.sse.cvtss2si64"]
-    #[cfg(target_arch = "x86_64")]
-    fn cvtss2si64(a: f32x4) -> i64;
     #[link_name = "llvm.x86.sse.cvttss2si"]
     fn cvttss2si(a: f32x4) -> i32;
-    #[link_name = "llvm.x86.sse.cvttss2si64"]
-    #[cfg(target_arch = "x86_64")]
-    fn cvttss2si64(a: f32x4) -> i64;
     #[link_name = "llvm.x86.sse.sfence"]
     fn sfence();
     #[link_name = "llvm.x86.sse.stmxcsr"]
@@ -1740,6 +1734,19 @@ extern "C" {
     #[link_name = "llvm.x86.sse.cmp.ss"]
     fn cmpss(a: f32x4, b: f32x4, imm8: i8) -> f32x4;
 }
+
+not_i586!(
+mod i686 {
+    #[allow(improper_ctypes)]
+    extern "C" {
+        #[link_name = "llvm.x86.sse.cvtss2si64"]
+        fn cvtss2si64(a: f32x4) -> i64;
+        #[link_name = "llvm.x86.sse.cvttss2si64"]
+        fn cvttss2si64(a: f32x4) -> i64;
+    }
+}
+);
+not_i586!(use i686::*; );
 
 #[cfg(test)]
 mod tests {

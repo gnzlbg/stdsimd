@@ -1165,8 +1165,12 @@ mod tests {
 
     #[simd_test = "sse4.1"]
     unsafe fn _mm_mul_epi32() {
-        let a =
-            i32x4::new(15, 2 /* ignored */, 1234567, 4 /* ignored */);
+        let a = i32x4::new(
+            15,
+            2, /* ignored */
+            1234567,
+            4, /* ignored */
+        );
         let b = i32x4::new(
             -20,
             -256, /* ignored */
