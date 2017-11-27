@@ -13,9 +13,9 @@ matrix:
     - env: TARGET=x86_64-unknown-linux-gnu
     - env: TARGET=x86_64-unknown-linux-gnu-emulated
     - env: TARGET=mips-unknown-linux-gnu
+    - env: TARGET=mipsel-unknown-linux-gnu
     - env: TARGET=mips64-unknown-linux-gnuabi64
     - env: TARGET=mips64el-unknown-linux-gnuabi64
-    - env: TARGET=mipsel-unknown-linux-gnu
     - os: osx
       env: TARGET=x86_64-apple-darwin
     - env: DOCUMENTATION

@@ -229,3 +229,7 @@ mod arm;
 mod aarch64;
 
 mod nvptx;
+
+#[cfg(any(target_arch = "mips", target_arch = "mips64",
+          target_arch = "mipsel", target_arch = "mips64el"))]
+mod mips;
