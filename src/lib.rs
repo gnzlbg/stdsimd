@@ -130,7 +130,7 @@ extern crate coresimd;
 pub mod vendor {
     pub use coresimd::vendor::*;
 
-    #[cfg(not(any(target_arch = "x86", target_arch = "x86_64")))]
+    #[cfg(any(target_arch = "arm", target_arch = "aarch64"))]
     pub use super::runtime::{__unstable_detect_feature, __Feature};
 }
 
