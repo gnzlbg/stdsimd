@@ -45,6 +45,6 @@ mod tests {
         );
         let r = i8x16::splat(5);
 
-        assert_eq!(r, msa::__msa_add_a_b(a, b));
+        assert_eq!(r, unsafe { msa::__msa_add_a_b(a, b) });
     }
 }
