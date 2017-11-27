@@ -159,6 +159,10 @@ pub mod vendor {
     #[cfg(target_arch = "aarch64")]
     pub use aarch64::*;
 
+    #[cfg(any(target_arch = "mips", target_arch = "mips64",
+              target_arch = "mipsel", target_arch = "mips64el"))]
+    pub use mips::*;
+
     // FIXME: rust does not expose the nvptx and nvptx64 targets yet
     #[cfg(not(any(target_arch = "x86", target_arch = "x86_64",
                   target_arch = "arm", target_arch = "aarch64")))]
@@ -228,8 +232,8 @@ mod arm;
 #[cfg(target_arch = "aarch64")]
 mod aarch64;
 
-mod nvptx;
-
 #[cfg(any(target_arch = "mips", target_arch = "mips64",
           target_arch = "mipsel", target_arch = "mips64el"))]
 mod mips;
+
+mod nvptx;
