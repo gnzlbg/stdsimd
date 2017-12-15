@@ -7,8 +7,6 @@
 #[cfg(test)]
 use stdsimd_test::assert_instr;
 
-use simd_llvm::simd_add;
-
 use v128::i8x16;
 
 #[allow(improper_ctypes)]
