@@ -24,6 +24,10 @@ unsafe fn vavgsb(a: i8x16, b: i8x16) -> i8x16 {
 
 #[cfg(test)]
 mod tests {
+    use stdsimd_test::simd_test;
+    use simd::*;
+    use powerpc::altivec;
+
     #[simd_test = "altivec"]
     unsafe fn vavgsb() {
         let a = i8x16::splat(1);
