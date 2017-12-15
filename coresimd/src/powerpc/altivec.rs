@@ -18,7 +18,7 @@ extern "C" {
 #[inline(always)]
 #[target_feature = "altivec"]
 #[cfg_attr(test, assert_instr(vavgsb))]
-unsafe fn vavgsb(a: i8x16, b: i8x16) -> i8x16 {
+pub unsafe fn vavgsb(a: i8x16, b: i8x16) -> i8x16 {
     vavgsb_(a, b)
 }
 
