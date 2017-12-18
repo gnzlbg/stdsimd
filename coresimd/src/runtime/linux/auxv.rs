@@ -49,12 +49,13 @@ pub mod libc {
     use super::*;
 
     mod ffi {
+        pub type F = unsafe extern "C" fn(usize) -> usize;
+        #[allow(improper_ctypes)]
         extern "C" {
             #[linkage = "extern_weak"]
-            pub fn getauxval(x: usize) -> usize;
+            pub static getauxval: *const ();
         }
     }
-
 
     /// Returns the value of the ELF Auxiliary Vector associated with `key`.
     ///
@@ -66,12 +67,12 @@ pub mod libc {
     /// vector properly succeeds.
     fn getauxval(key: usize) -> Result<usize, ()> {
         unsafe {
-            let ffi_getauxval : Option<extern fn(usize) -> usize>
-                = ::core::mem::transmute(&ffi::getauxval);
-            if let Some(f) = ffi_getauxval {
-                return Ok(f(key));
+            if ffi::getauxval.is_null() {
+                return Err(());
             }
-            Err(())
+
+            let ffi_getauxval: ffi::F = ::core::mem::transmute(ffi::getauxval);
+             Ok(ffi_getauxval(key))
         }
     }
 
