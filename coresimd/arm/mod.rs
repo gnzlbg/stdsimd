@@ -20,8 +20,8 @@ pub use self::v7::*;
 // NEON is supported on AArch64, and on ARM when built with the v7 and neon
 // features. Building ARM without neon produces incorrect codegen.
 #[cfg(any(target_arch = "aarch64",
-          all(target_feature = "v7", target_feature = "neon")))]
+          target_feature = "v7"))]
 mod neon;
 #[cfg(any(target_arch = "aarch64",
-          all(target_feature = "v7", target_feature = "neon")))]
+          target_feature = "v7"))]
 pub use self::neon::*;
