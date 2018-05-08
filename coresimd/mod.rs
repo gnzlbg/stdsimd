@@ -6,6 +6,8 @@ mod macros;
 #[macro_use]
 mod ppsv;
 
+mod ppv;
+
 /// Platform independent SIMD vector types and operations.
 ///
 /// This is an **unstable** module for portable SIMD operations. This module
@@ -14,6 +16,11 @@ mod ppsv;
 #[unstable(feature = "stdsimd", issue = "0")]
 pub mod simd {
     pub use coresimd::ppsv::*;
+}
+
+#[unstable(feature = "stdsimd", issue = "0")]
+pub mod simd2 {
+    pub use coresimd::ppv::*;
 }
 
 /// Platform dependent vendor intrinsics.
