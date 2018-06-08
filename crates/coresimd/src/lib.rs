@@ -65,6 +65,7 @@ macro_rules! test_v512 {
     ($item:item) => {};
 }
 macro_rules! vector_impl {
+    ([$f:ident]) => { $f!(); };
     ($([$f:ident, $($args:tt)*]),*) => { $($f!($($args)*);)* }
 }
 

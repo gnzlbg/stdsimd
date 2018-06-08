@@ -34,6 +34,7 @@
 #[macro_use]
 mod api;
 
+mod ptr;
 mod v128;
 mod v16;
 mod v256;
@@ -41,6 +42,7 @@ mod v32;
 mod v512;
 mod v64;
 
+pub use self::ptr::*;
 pub use self::v128::*;
 pub use self::v16::*;
 pub use self::v256::*;

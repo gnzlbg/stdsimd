@@ -36,6 +36,7 @@ macro_rules! test_v512 {
 
 #[cfg(test)]
 macro_rules! vector_impl {
+    ([$f:ident]) => { };
     ($([$f:ident, $($args:tt)*]),*) => {};
 }
 

@@ -65,6 +65,17 @@ macro_rules! define_ty {
     }
 }
 
+/// Adds the pointer vector type `$id`, with elements of types `$elem_tys`.
+macro_rules! define_ptr_ty {
+    ($id:ident: $ty:ident | $($elem_tys:ident),+ | $(#[$doc:meta])*) => {
+        $(#[$doc])*
+        #[repr(simd)]
+        #[derive(Copy, Clone, Debug, /*FIXME:*/ PartialOrd, /*FIXME:*/ PartialEq)]
+        #[allow(non_camel_case_types)]
+        pub struct $id<$ty: super::api::Pointer>($($elem_tys),*);
+    }
+}
+
 #[macro_use]
 mod arithmetic_ops;
 #[macro_use]
@@ -100,6 +111,8 @@ mod masks;
 #[macro_use]
 mod masks_reductions;
 #[macro_use]
+mod masked_gather_scatter;
+#[macro_use]
 mod minimal;
 #[macro_use]
 mod minmax;
@@ -115,11 +128,10 @@ mod partial_eq;
 // TODO:
 //#[macro_use]
 //mod shuffles;
-// TODO:
-//#[macro_use]
-//mod gather_scatter;
 #[macro_use]
 mod masks_select;
+#[macro_use]
+mod ptr;
 #[macro_use]
 mod scalar_shifts;
 #[macro_use]
@@ -127,6 +139,53 @@ mod shifts;
 
 /// Sealed trait used for constraining select implementations.
 pub trait Lanes<A> {}
+
+/// Sealed trait for constraining the type argument of the pointer vector
+/// types to be pointers.
+pub trait Pointer: ::marker::Copy + ::clone::Clone
+    + ::cmp::PartialEq + ::cmp::PartialOrd + ::cmp::Eq + ::cmp::Ord
+    + ::hash::Hash  {}
+
+macro_rules! impl_blanket_ptrs {
+    () => {
+        impl<T> Pointer for *mut T {}
+        impl<T> Pointer for *const T {}
+
+        impl<T> Lanes<[*const T; 2]> for super::px2<*const T> {}
+        impl<T> Lanes<[*mut T; 2]> for super::px2<*const T> {}
+
+        impl<T> Lanes<[*const T; 4]> for super::px4<*const T> {}
+        impl<T> Lanes<[*mut T; 4]> for super::px4<*const T> {}
+
+        impl<T> Lanes<[*const T; 8]> for super::px8<*const T> {}
+        impl<T> Lanes<[*mut T; 8]> for super::px8<*const T> {}
+
+        /*
+        impl<T> Lanes<[*const T; 16]> for super::px16<*const T> {}
+        impl<T> Lanes<[*mut T; 16]> for super::px16<*const T> {}
+
+        impl<T> Lanes<[*const T; 32]> for super::px32<*const T> {}
+        impl<T> Lanes<[*mut T; 32]> for super::px32<*const T> {}
+
+        impl<T> Lanes<[*const T; 64]> for super::px64<*const T> {}
+        impl<T> Lanes<[*mut T; 64]> for super::px64<*const T> {}
+        */
+    }
+}
+
+vector_impl!([impl_blanket_ptrs]);
+
+/// Defines a portable packed SIMD pointer vector type.
+macro_rules! simd_ptr_ty {
+    ($id:ident: $elem_count:expr, $ty:ident,
+     $isize_ty:ident, $usize_ty:ident, $mask_ty:ident | $($elem_tys:ident),+
+     | $($elem_name:ident),+ | $(#[$doc:meta])*) => {
+        vector_impl!(
+            [define_ptr_ty, $id: $ty | $($elem_tys),+ | $(#[$doc])*],
+            [impl_minimal_ptr, $id, $elem_count, $isize_ty, $usize_ty, $mask_ty, $($elem_name),*]
+        );
+    }
+}
 
 /// Defines a portable packed SIMD floating-point vector type.
 macro_rules! simd_f_ty {
@@ -293,7 +352,8 @@ macro_rules! simd_m_ty {
             [impl_mask_cmp, $id, $id],
             [impl_eq, $id],
             [impl_partial_eq, $id],
-            [impl_default, $id, bool]
+            [impl_default, $id, bool],
+            [impl_masked_gather_scatter, $id, $elem_ty, $elem_count]
         );
 
         $test_macro!(

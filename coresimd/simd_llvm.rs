@@ -54,4 +54,7 @@ extern "platform-intrinsic" {
 
     pub fn simd_fsqrt<T>(a: T) -> T;
     pub fn simd_fma<T>(a: T, b: T, c: T) -> T;
+
+    pub fn simd_scatter<T, P, M>(value: T, pointers: P, mask: M);
+    pub fn simd_gather<T, P, M>(value: T, pointers: P, mask: M) -> T;
 }
