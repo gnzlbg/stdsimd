@@ -42,6 +42,7 @@ matrix:
         - cat wasm.wat
         - grep current_memory wasm.wat
         - grep grow_memory wasm.wat
+        - wasm-interp target/wasm32-unknown-unknown/release/examples/wasm.wasm --run-all-exports
     - env: DOCUMENTATION
       install: true
       script: ci/dox.sh
