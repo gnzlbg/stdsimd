@@ -8,11 +8,6 @@ matrix:
     #- env: TARGET=i586-unknown-linux-gnu
     #- env: TARGET=i686-unknown-linux-gnu
     - env: TARGET=x86_64-unknown-linux-gnu NO_ADD=1
-    - env: TARGET=x86_64-unknown-linux-gnu NO_ADD=1
-      addons:
-        apt:
-          sources: ['llvm-toolchain-trusty-6.0', 'ubuntu-toolchain-r-test']
-          packages: ['clang-6.0']
     #- env: TARGET=x86_64-unknown-linux-gnu-emulated NO_ADD=1 STDSIMD_TEST_EVERYTHING=1
     #- env: TARGET=x86_64-linux-android
     #- env: TARGET=arm-unknown-linux-gnueabihf
