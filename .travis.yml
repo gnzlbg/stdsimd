@@ -75,10 +75,10 @@ matrix:
       script: cargo test --manifest-path crates/stdsimd-verify/Cargo.toml
       install: true
     - name: "rustfmt"
-      before_script: rustup component add rustfmt-preview
+      install: rustup component add rustfmt-preview
       script: cargo fmt --all -- --check
     - name: "clippy"
-      before_script: rustup component add clippy-preview
+      install: rustup component add clippy-preview
       script: cargo clippy --all -- -D clippy::pedantic
 
 install: travis_retry rustup target add $TARGET
