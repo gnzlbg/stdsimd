@@ -2573,7 +2573,7 @@ pub unsafe fn _mm_loadl_pd(a: __m128d, mem_addr: *const f64) -> __m128d {
 #[cfg_attr(test, assert_instr(movntps))] // FIXME movntpd
 #[stable(feature = "simd_x86", since = "1.27.0")]
 pub unsafe fn _mm_stream_pd(mem_addr: *mut f64, a: __m128d) {
-    intrinsics::nontemporal_store(mem::transmute(mem_addr), a);
+    intrinsics::nontemporal_store(mem_addr as *mut __m128d, a);
 }
 
 /// Stores the lower 64 bits of a 128-bit vector of `[2 x double]` to a

@@ -36,20 +36,20 @@
     powerpc_target_feature
 )]
 #![cfg_attr(test, feature(test, abi_vectorcall, untagged_unions))]
+#![cfg_attr(feature = "cargo-clippy", feature(tool_lints))]
 #![cfg_attr(
     feature = "cargo-clippy",
     allow(
-        inline_always,
-        too_many_arguments,
-        cast_sign_loss,
-        cast_lossless,
-        cast_possible_wrap,
-        cast_possible_truncation,
-        cast_precision_loss,
-        shadow_reuse,
-        cyclomatic_complexity,
-        similar_names,
-        many_single_char_names
+        clippy::cast_sign_loss,
+        clippy::cast_lossless,
+        clippy::cast_ptr_alignment,
+        clippy::cast_possible_wrap,
+        clippy::cast_possible_truncation,
+        clippy::cast_precision_loss,
+        clippy::too_many_arguments,
+        clippy::cyclomatic_complexity,
+        clippy::similar_names,
+        clippy::many_single_char_names
     )
 )]
 #![cfg_attr(test, allow(unused_imports))]

@@ -20,6 +20,8 @@ use proc_macro2::TokenStream;
 pub fn assert_instr(
     attr: proc_macro::TokenStream, item: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
+    use quote::ToTokens;
+
     let invoc = syn::parse::<Invoc>(attr)
         .expect("expected #[assert_instr(instr, a = b, ...)]");
     let item =
@@ -38,7 +40,6 @@ pub fn assert_instr(
     let disable_assert_instr =
         std::env::var("STDSIMD_DISABLE_ASSERT_INSTR").is_ok();
 
-    use quote::ToTokens;
     let instr_str = instr
         .replace('.', "_")
         .replace(|c: char| c.is_whitespace(), "");
@@ -62,14 +63,12 @@ pub fn assert_instr(
             syn::Pat::Ident(ref i) => &i.ident,
             _ => panic!("must have bare arguments"),
         };
-        match invoc.args.iter().find(|a| *ident == a.0) {
-            Some(&(_, ref tts)) => {
-                input_vals.push(quote! { #tts });
-            }
-            None => {
-                inputs.push(capture);
-                input_vals.push(quote! { #ident });
-            }
+        if let Some(&(_, ref tts)) = invoc.args.iter().find(|a| *ident == a.0)
+        {
+            input_vals.push(quote! { #tts });
+        } else {
+            inputs.push(capture);
+            input_vals.push(quote! { #ident });
         };
     }
 
@@ -133,8 +132,7 @@ pub fn assert_instr(
                                    stringify!(#shim_name),
                                    #instr);
         }
-    }
-    .into();
+    };
     // why? necessary now to get tests to work?
     let tts: TokenStream =
         tts.to_string().parse().expect("cannot parse tokenstream");
@@ -142,8 +140,7 @@ pub fn assert_instr(
     let tts: TokenStream = quote! {
         #item
         #tts
-    }
-    .into();
+    };
     tts.into()
 }
 
@@ -167,7 +164,7 @@ impl syn::parse::Parse for Invoc {
             let expr = input.parse::<syn::Expr>()?;
             args.push((name, expr));
         }
-        Ok(Invoc { instr, args })
+        Ok(Self { instr, args })
     }
 }
 

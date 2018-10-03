@@ -1278,6 +1278,7 @@ pub unsafe fn _mm_load_ps1(p: *const f32) -> __m128 {
 #[target_feature(enable = "sse")]
 #[cfg_attr(test, assert_instr(movaps))]
 #[stable(feature = "simd_x86", since = "1.27.0")]
+#[cfg_attr(feature = "cargo-clippy", allow(clippy::cast_ptr_alignment))]
 pub unsafe fn _mm_load_ps(p: *const f32) -> __m128 {
     *(p as *const __m128)
 }
@@ -2095,7 +2096,7 @@ extern "C" {
 #[cfg_attr(test, assert_instr(movntps))]
 #[stable(feature = "simd_x86", since = "1.27.0")]
 pub unsafe fn _mm_stream_ps(mem_addr: *mut f32, a: __m128) {
-    intrinsics::nontemporal_store(mem::transmute(mem_addr), a);
+    intrinsics::nontemporal_store(mem_addr as *mut __m128, a);
 }
 
 /// Store 64-bits of integer data from a into memory using a non-temporal

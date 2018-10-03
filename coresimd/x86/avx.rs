@@ -1451,6 +1451,10 @@ pub unsafe fn _mm256_permute2f128_si256(
 #[target_feature(enable = "avx")]
 #[cfg_attr(test, assert_instr(vbroadcastss))]
 #[stable(feature = "simd_x86", since = "1.27.0")]
+#[cfg_attr(
+    feature = "cargo-clippy",
+    allow(clippy::trivially_copy_pass_by_ref)
+)]
 pub unsafe fn _mm256_broadcast_ss(f: &f32) -> __m256 {
     _mm256_set1_ps(*f)
 }
@@ -1463,6 +1467,10 @@ pub unsafe fn _mm256_broadcast_ss(f: &f32) -> __m256 {
 #[target_feature(enable = "avx")]
 #[cfg_attr(test, assert_instr(vbroadcastss))]
 #[stable(feature = "simd_x86", since = "1.27.0")]
+#[cfg_attr(
+    feature = "cargo-clippy",
+    allow(clippy::trivially_copy_pass_by_ref)
+)]
 pub unsafe fn _mm_broadcast_ss(f: &f32) -> __m128 {
     _mm_set1_ps(*f)
 }
@@ -1475,6 +1483,10 @@ pub unsafe fn _mm_broadcast_ss(f: &f32) -> __m128 {
 #[target_feature(enable = "avx")]
 #[cfg_attr(test, assert_instr(vbroadcastsd))]
 #[stable(feature = "simd_x86", since = "1.27.0")]
+#[cfg_attr(
+    feature = "cargo-clippy",
+    allow(clippy::trivially_copy_pass_by_ref)
+)]
 pub unsafe fn _mm256_broadcast_sd(f: &f64) -> __m256d {
     _mm256_set1_pd(*f)
 }
@@ -1487,6 +1499,10 @@ pub unsafe fn _mm256_broadcast_sd(f: &f64) -> __m256d {
 #[target_feature(enable = "avx")]
 #[cfg_attr(test, assert_instr(vbroadcastf128))]
 #[stable(feature = "simd_x86", since = "1.27.0")]
+#[cfg_attr(
+    feature = "cargo-clippy",
+    allow(clippy::trivially_copy_pass_by_ref)
+)]
 pub unsafe fn _mm256_broadcast_ps(a: &__m128) -> __m256 {
     vbroadcastf128ps256(a)
 }
@@ -1499,6 +1515,10 @@ pub unsafe fn _mm256_broadcast_ps(a: &__m128) -> __m256 {
 #[target_feature(enable = "avx")]
 #[cfg_attr(test, assert_instr(vbroadcastf128))]
 #[stable(feature = "simd_x86", since = "1.27.0")]
+#[cfg_attr(
+    feature = "cargo-clippy",
+    allow(clippy::trivially_copy_pass_by_ref)
+)]
 pub unsafe fn _mm256_broadcast_pd(a: &__m128d) -> __m256d {
     vbroadcastf128pd256(a)
 }
@@ -1942,7 +1962,8 @@ pub unsafe fn _mm256_lddqu_si256(mem_addr: *const __m256i) -> __m256i {
 #[cfg_attr(test, assert_instr(vmovntps))] // FIXME vmovntdq
 #[stable(feature = "simd_x86", since = "1.27.0")]
 pub unsafe fn _mm256_stream_si256(mem_addr: *const __m256i, a: __m256i) {
-    intrinsics::nontemporal_store(mem::transmute(mem_addr), a);
+    // FIXME: this function writes through a `const` pointer !
+    intrinsics::nontemporal_store(mem_addr as *mut __m256i, a);
 }
 
 /// Moves double-precision values from a 256-bit vector of `[4 x double]`
@@ -1955,7 +1976,8 @@ pub unsafe fn _mm256_stream_si256(mem_addr: *const __m256i, a: __m256i) {
 #[cfg_attr(test, assert_instr(vmovntps))] // FIXME vmovntpd
 #[stable(feature = "simd_x86", since = "1.27.0")]
 pub unsafe fn _mm256_stream_pd(mem_addr: *const f64, a: __m256d) {
-    intrinsics::nontemporal_store(mem::transmute(mem_addr), a);
+    // FIXME: this function writes through a `const` pointer !
+    intrinsics::nontemporal_store(mem_addr as *mut __m256d, a);
 }
 
 /// Moves single-precision floating point values from a 256-bit vector
@@ -1969,7 +1991,8 @@ pub unsafe fn _mm256_stream_pd(mem_addr: *const f64, a: __m256d) {
 #[cfg_attr(test, assert_instr(vmovntps))]
 #[stable(feature = "simd_x86", since = "1.27.0")]
 pub unsafe fn _mm256_stream_ps(mem_addr: *const f32, a: __m256) {
-    intrinsics::nontemporal_store(mem::transmute(mem_addr), a);
+    // FIXME: this function writes through a `const` pointer !
+    intrinsics::nontemporal_store(mem_addr as *mut __m256, a);
 }
 
 /// Compute the approximate reciprocal of packed single-precision (32-bit)
