@@ -1,0 +1,9 @@
+[package]
+authors = ["Jorge Aparicio <japaricious@gmail.com>"]
+name = "host"
+version = "0.1.0"
+build = "build.rs"
+
+[build-dependencies]
+ptx-builder = { git = "https://github.com/denzp/rust-ptx-builder" }
+#ptx-builder = "0.4"

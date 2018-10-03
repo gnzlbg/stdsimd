@@ -58,6 +58,14 @@ matrix:
     # WebAssembly
     - env: TARGET=wasm32-unknown-unknown
       name: "wasm32-unknown-unknown"
+    - name: "nvptx64-nvidia-cuda"
+      env: TARGET=nvptx64-nvidia-cuda
+      install: true
+      script: ci/nvptx.sh
+    - name: "nvptx-nvidia-cuda"
+      env: TARGET=nvptx-nvidia-cuda
+      install: true
+      script: ci/nvptx.sh
     # Embedded
     - env: TARGET=thumbv6m-none-eabi NOSTD=1
       name: "thumbv6m-none-eabi"

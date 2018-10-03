@@ -18,7 +18,6 @@
     simd_ffi,
     asm,
     proc_macro_gen,
-    integer_atomics,
     stmt_expr_attributes,
     core_intrinsics,
     no_core,
@@ -35,6 +34,7 @@
     mips_target_feature,
     powerpc_target_feature
 )]
+#![cfg_attr(not(any(target_arch = "nvptx", target_arch = "nvptx64")), feature(integer_atomics))]
 #![cfg_attr(test, feature(test, abi_vectorcall, untagged_unions))]
 #![cfg_attr(feature = "cargo-clippy", feature(tool_lints))]
 #![cfg_attr(

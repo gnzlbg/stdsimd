@@ -4,7 +4,8 @@ members = [
   "crates/stdsimd",
 ]
 exclude = [
-  "crates/wasm-assert-instr-tests"
+  "crates/wasm-assert-instr-tests",
+  "crates/nvptx-test"
 ]
 
 [profile.release]
