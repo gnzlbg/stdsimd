@@ -508,8 +508,8 @@ pub unsafe fn _mm256_blend_epi16(
                 a,
                 b,
                 [
-                    $a, $b, $c, $d, $e, $f, $g, $h, $i, $j, $k, $l, $m,
-                    $n, $o, $p,
+                    $a, $b, $c, $d, $e, $f, $g, $h, $i, $j, $k, $l, $m, $n,
+                    $o, $p,
                 ],
             )
         };
@@ -535,16 +535,16 @@ pub unsafe fn _mm256_blend_epi16(
                     $f2, 14, 15
                 ),
                 0b01 => blend4!(
-                    $a, $b, $c, $d, $e, $f, 22, 7, $a2, $b2, $c2, $d2,
-                    $e2, $f2, 30, 15
+                    $a, $b, $c, $d, $e, $f, 22, 7, $a2, $b2, $c2, $d2, $e2,
+                    $f2, 30, 15
                 ),
                 0b10 => blend4!(
-                    $a, $b, $c, $d, $e, $f, 6, 23, $a2, $b2, $c2, $d2,
-                    $e2, $f2, 14, 31
+                    $a, $b, $c, $d, $e, $f, 6, 23, $a2, $b2, $c2, $d2, $e2,
+                    $f2, 14, 31
                 ),
                 _ => blend4!(
-                    $a, $b, $c, $d, $e, $f, 22, 23, $a2, $b2, $c2, $d2,
-                    $e2, $f2, 30, 31
+                    $a, $b, $c, $d, $e, $f, 22, 23, $a2, $b2, $c2, $d2, $e2,
+                    $f2, 30, 31
                 ),
             }
         };
@@ -561,18 +561,18 @@ pub unsafe fn _mm256_blend_epi16(
             $d2:expr
         ) => {
             match (imm8 >> 4) & 0b11 {
-                0b00 => blend3!(
-                    $a, $b, $c, $d, 4, 5, $a2, $b2, $c2, $d2, 12, 13
-                ),
-                0b01 => blend3!(
-                    $a, $b, $c, $d, 20, 5, $a2, $b2, $c2, $d2, 28, 13
-                ),
-                0b10 => blend3!(
-                    $a, $b, $c, $d, 4, 21, $a2, $b2, $c2, $d2, 12, 29
-                ),
-                _ => blend3!(
-                    $a, $b, $c, $d, 20, 21, $a2, $b2, $c2, $d2, 28, 29
-                ),
+                0b00 => {
+                    blend3!($a, $b, $c, $d, 4, 5, $a2, $b2, $c2, $d2, 12, 13)
+                }
+                0b01 => {
+                    blend3!($a, $b, $c, $d, 20, 5, $a2, $b2, $c2, $d2, 28, 13)
+                }
+                0b10 => {
+                    blend3!($a, $b, $c, $d, 4, 21, $a2, $b2, $c2, $d2, 12, 29)
+                }
+                _ => {
+                    blend3!($a, $b, $c, $d, 20, 21, $a2, $b2, $c2, $d2, 28, 29)
+                }
             }
         };
     }
@@ -2781,11 +2781,11 @@ pub unsafe fn _mm256_shufflehi_epi16(a: __m256i, imm8: i32) -> __m256i {
     macro_rules! shuffle_done {
         ($x01:expr, $x23:expr, $x45:expr, $x67:expr) => {
             #[cfg_attr(rustfmt, rustfmt_skip)]
-            simd_shuffle16(a, a, [
-                0, 1, 2, 3, 4+$x01, 4+$x23, 4+$x45, 4+$x67,
-                8, 9, 10, 11, 12+$x01, 12+$x23, 12+$x45, 12+$x67
-            ]);
-        }
+                        simd_shuffle16(a, a, [
+                            0, 1, 2, 3, 4+$x01, 4+$x23, 4+$x45, 4+$x67,
+                            8, 9, 10, 11, 12+$x01, 12+$x23, 12+$x45, 12+$x67
+                        ]);
+        };
     }
     macro_rules! shuffle_x67 {
         ($x01:expr, $x23:expr, $x45:expr) => {

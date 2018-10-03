@@ -131,7 +131,7 @@ pub mod arch {
     pub mod powerpc64 {
         pub use coresimd::powerpc64::*;
     }
-    
+
     /// Platform-specific intrinsics for the `NVPTX` platform.
     ///
     /// See the [module documentation](../index.html) for more details.
