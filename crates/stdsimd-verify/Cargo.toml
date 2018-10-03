@@ -2,6 +2,7 @@
 name = "stdsimd-verify"
 version = "0.1.0"
 authors = ["Alex Crichton <alex@alexcrichton.com>"]
+edition = "2018"
 
 [dependencies]
 proc-macro2 = "0.4"

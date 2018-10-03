@@ -1,3 +1,4 @@
+#![feature(bind_by_move_pattern_guards)]
 #![cfg_attr(feature = "cargo-clippy", feature(tool_lints))]
 
 extern crate proc_macro;
@@ -11,7 +12,7 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 
-use proc_macro::TokenStream;
+use self::proc_macro::TokenStream;
 
 #[proc_macro]
 pub fn x86_functions(input: TokenStream) -> TokenStream {
@@ -210,13 +211,7 @@ fn find_target_feature(attrs: &[syn::Attribute]) -> Option<syn::Lit> {
     attrs
         .iter()
         .flat_map(|a| match a.interpret_meta() {
-            Some(syn::Meta::List(i)) => {
-                if i.ident == "target_feature" {
-                    i.nested
-                } else {
-                    syn::punctuated::Punctuated::new()
-                }
-            }
+            Some(syn::Meta::List(i)) if i.ident == "target_feature" => i.nested,
             _ => syn::punctuated::Punctuated::new(),
         })
         .filter_map(|nested| match nested {
