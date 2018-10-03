@@ -1,54 +1,61 @@
-stdsimd - Rust's standard library SIMD components
+`std::arch` - Rust's std library implementation of architecture-specific APIs
 =======
 
 [![Travis-CI Status]][travis] [![Appveyor Status]][appveyor] [![Latest Version]][crates.io] [![docs]][docs.rs]
 
 # Usage
 
-`stdsimd` is now shipped with Rust's `std` library - its is part of `libcore`
-and `libstd`.
+The `arch` module is shipped with `libcore` and `libstd`. To use it, just import
+it: `use std::arch` or `use core::arch`.
 
-The easiest way to use it is just to import it via `use std::arch`. 
-
-The `std::arch` component for `x86` is available in stable Rust. The `std::arch`
-components for other architectures and the `std::simd` component require nightly
-Rust.
-
-Using `stdsimd` master branch is not recommended. It requires nightly Rust, it
-only works with particular Rust nightly versions, and it can (and does) break
-often. If you need to use `stdsimd` master branch, you can add it to your
-`Cargo.toml` as follows:
+It is not recommended to use `stdsimd`'s master branch, but if you need to do
+so, you can add `stdsimd` to your `Cargo.toml` as follows:
 
 ```toml
 #[dependencies]
 stdsimd = { git = "https://github.com/rust-lang-nursery/stdsimd.git" }
 ```
 
-# Documentation
+# Architecture support
 
-* [Documentation - i686][i686]
-* [Documentation - x86\_64][x86_64]
-* [Documentation - arm][arm]
-* [Documentation - aarch64][aarch64]
-* [Documentation - powerpc][powerpc]
-* [Documentation - powerpc64][powerpc64]
-* [How to get started][contrib]
-* [How to help implement intrinsics][help-implement]
+| Architecture: | Rust version  | Docs              | Builds | Runs | Verified |
+|---------------|---------------|-------------------|--------|------|----------|
+| `x86`         | stable 1.27.0 | [docs][i686]      | ✓      | ✓    | ✓        |
+| `x86_64`      | stable 1.27.0 | [docs][x86_64]    | ✓      | ✓    | ✓        |
+| `arm`         | nightly       | [docs][arm]       | ✓      | ✓    | ✗        |
+| `aarch64`     | nightly       | [docs][aarch64]   | ✓      | ✓    | ✗        |
+| `powerpc`     | nightly       | [docs][powerpc]   | ✓      | ✓    | ✗        |
+| `powerpc64`   | nightly       | [docs][powerpc64] | ✓      | ✓    | ✗        |
+| `powerpc64le` | nightly       | [docs][powerpc64] | ✓      | ✓    | ✗        |
+| `mips`        | nightly       | [docs][mips]      | ✓      | ✗    | ✗        |
+| `mipsel`      | nightly       | [docs][mips]      | ✓      | ✗    | ✗        |
+| `mips64`      | nightly       | [docs][mips64]    | ✓      | ✗    | ✗        |
+| `mips64el`    | nightly       | [docs][mips64]    | ✓      | ✗    | ✗        |
+| `thumbv6m`    | nightly       | -                 | ✓      | ✗    | ✗        |
+| `thumbv7m`    | nightly       | -                 | ✓      | ✗    | ✗        |
+| `thumbv7em`   | nightly       | -                 | ✓      | ✗    | ✗        |
+| `wasm`        | nightly       | [docs][wasm]      | ✓      | ✓    | ✗        |
+| `nvptx`       | nightly       | [docs][nvptx]     | ✓      | ✓    | ✗        |
 
-[contrib]: https://github.com/rust-lang-nursery/stdsimd/blob/master/CONTRIBUTING.md
-[help-implement]: https://github.com/rust-lang-nursery/stdsimd/issues/40
+
 [i686]: https://rust-lang-nursery.github.io/stdsimd/i686/stdsimd/
 [x86_64]: https://rust-lang-nursery.github.io/stdsimd/x86_64/stdsimd/
 [arm]: https://rust-lang-nursery.github.io/stdsimd/arm/stdsimd/
 [aarch64]: https://rust-lang-nursery.github.io/stdsimd/aarch64/stdsimd/
 [powerpc]: https://rust-lang-nursery.github.io/stdsimd/powerpc/stdsimd/
 [powerpc64]: https://rust-lang-nursery.github.io/stdsimd/powerpc64/stdsimd/
+[mips]: https://rust-lang-nursery.github.io/stdsimd/mips/stdsimd/
+[mips64]: https://rust-lang-nursery.github.io/stdsimd/mips64/stdsimd/
+[wasm]: https://rust-lang-nursery.github.io/stdsimd/wasm/stdsimd/
+[nvptx]: https://rust-lang-nursery.github.io/stdsimd/nvptx/stdsimd/
 
-### Approach
+# Contribute
 
-The main goal is to expose APIs defined by *vendors* with the least amount of
-abstraction possible. On x86, for example, the API should correspond to that
-provided by `emmintrin.h`.
+* [How to get started][contrib]
+* [How to help implement intrinsics][help-implement]
+
+[contrib]: https://github.com/rust-lang-nursery/stdsimd/blob/master/CONTRIBUTING.md
+[help-implement]: https://github.com/rust-lang-nursery/stdsimd/issues/40
 
 # License
 

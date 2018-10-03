@@ -80,7 +80,7 @@ fn detect_features() -> cache::Initializer {
     } = unsafe { __cpuid(0x0000_0001_u32) };
 
     // EAX = 7, ECX = 0: Queries "Extended Features";
-    // Contains information about bmi,bmi2, and avx2 support.
+    // Contains information about bmi, bmi2, and avx2 support.
     let (extended_features_ebx, extended_features_ecx) = if max_basic_leaf >= 7
     {
         let CpuidResult { ebx, ecx, .. } = unsafe { __cpuid(0x0000_0007_u32) };
