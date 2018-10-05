@@ -58,12 +58,9 @@ matrix:
     # WebAssembly
     - env: TARGET=wasm32-unknown-unknown
       name: "wasm32-unknown-unknown"
+    # NVPTX
     - name: "nvptx64-nvidia-cuda"
-      env: TARGET=nvptx64-nvidia-cuda
-      install: true
-      script: ci/nvptx.sh
-    - name: "nvptx-nvidia-cuda"
-      env: TARGET=nvptx-nvidia-cuda
+      env: TARGET=nvptx64-nvidia-cuda CUDA=8.0.61-1
       install: true
       script: ci/nvptx.sh
     # Embedded
