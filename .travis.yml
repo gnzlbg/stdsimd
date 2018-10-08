@@ -1,5 +1,6 @@
 language: rust
 sudo: true
+dist: trusty
 rust: nightly
 
 matrix:
@@ -62,7 +63,7 @@ matrix:
     - name: "nvptx64-nvidia-cuda"
       env: TARGET=nvptx64-nvidia-cuda CUDA=8.0.61-1
       install: true
-      script: ci/nvptx.sh
+      script: source ci/nvptx.sh
     # Embedded
     #- env: TARGET=thumbv6m-none-eabi NOSTD=1
     #  name: "thumbv6m-none-eabi"
