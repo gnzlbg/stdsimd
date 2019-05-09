@@ -52,10 +52,10 @@ STDSIMD_EXAMPLES="--manifest-path=examples/Cargo.toml"
 cargo_test "${CORE_ARCH}"
 cargo_test "${CORE_ARCH} --release"
 
-if [ "$NOSTD" != "1" ]; then
-    cargo_test "${STD_DETECT}"
-    cargo_test "${STD_DETECT} --release"
+cargo_test "${STD_DETECT}"
+cargo_test "${STD_DETECT} --release"
 
+if [ "$NOSTD" != "1" ]; then
     cargo_test "${STD_DETECT} --no-default-features"
     cargo_test "${STD_DETECT} --no-default-features --features=std_detect_file_io"
     cargo_test "${STD_DETECT} --no-default-features --features=std_detect_dlsym_getauxval"
