@@ -87,6 +87,14 @@ fn parse_objdump(output: &str) -> HashMap<String, Vec<Function>> {
             .unwrap_or_else(|| panic!("\"<\" not found in symbol pattern of the form \"$hex_addr <$name>\": {}", header));
         let symbol = &header[start + 1..header.len() - 2];
 
+        // only parse the "shim" symbols:
+        if ! symbol.contains("stdsimd_test_shim") {
+            continue;
+        }
+        // strip the leading underscore and the trailing colon
+        eprintln!("before norm: {} - after norm: {}", header, normalize(&header));
+        let symbol = normalize(&header);
+
         let mut instructions = Vec::new();
         while let Some(instruction) = lines.next() {
             if instruction.is_empty() {
@@ -108,12 +116,16 @@ fn parse_objdump(output: &str) -> HashMap<String, Vec<Function>> {
             instructions.push(Instruction { parts });
         }
 
-        ret.entry(normalize(symbol))
+        ret.entry(symbol)
             .or_insert_with(Vec::new)
             .push(Function {
                 addr: None,
                 instrs: instructions,
             });
+    }
+
+    for (_k, v) in &mut ret {
+        assert_eq!(v.len(), 1);
     }
 
     ret
@@ -133,8 +145,14 @@ fn parse_otool(output: &str) -> HashMap<String, Vec<Function>> {
         if !header.ends_with(':') {
             continue;
         }
+
+        // only parse the "shim" symbols:
+        if ! header.contains("stdsimd_test_shim") {
+            continue;
+        }
+
         // strip the leading underscore and the trailing colon
-        let symbol = &header[1..header.len() - 1];
+        let symbol = normalize(&header);
 
         let mut instructions = Vec::new();
         while let Some(instruction) = lines.next() {
@@ -153,12 +171,16 @@ fn parse_otool(output: &str) -> HashMap<String, Vec<Function>> {
             instructions.push(Instruction { parts });
         }
 
-        ret.entry(normalize(symbol))
+        ret.entry(symbol)
             .or_insert_with(Vec::new)
             .push(Function {
                 addr: None,
                 instrs: instructions,
             });
+    }
+
+    for (_k, v) in &mut ret {
+        assert_eq!(v.len(), 1);
     }
 
     ret
@@ -180,6 +202,14 @@ fn parse_dumpbin(output: &str) -> HashMap<String, Vec<Function>> {
         }
         // strip the trailing colon
         let symbol = &header[..header.len() - 1];
+
+        // only parse the "shim" symbols:
+        if ! symbol.contains("stdsimd_test_shim") {
+            continue;
+        }
+
+        // strip the leading underscore and the trailing colon
+        let symbol = normalize(&symbol);
 
         let mut instructions = Vec::new();
         while let Some(instruction) = lines.next() {
@@ -205,12 +235,16 @@ fn parse_dumpbin(output: &str) -> HashMap<String, Vec<Function>> {
             instructions.push(Instruction { parts });
         }
 
-        ret.entry(normalize(symbol))
+        ret.entry(symbol)
             .or_insert_with(Vec::new)
             .push(Function {
                 addr: None,
                 instrs: instructions,
             });
+    }
+
+    for (_k, v) in &mut ret {
+        assert_eq!(v.len(), 1);
     }
 
     ret

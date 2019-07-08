@@ -49,7 +49,7 @@ pub fn assert_instr(
         .replace(':', "_")
         .replace(char::is_whitespace, "");
     let assert_name = syn::Ident::new(&format!("assert_{}_{}", name, instr_str), name.span());
-    let shim_name = syn::Ident::new(&format!("{}_shim_{}", name, instr_str), name.span());
+    let shim_name = syn::Ident::new(&format!("stdsimd_test_shim_{}_{}", name, instr_str), name.span());
     let mut inputs = Vec::new();
     let mut input_vals = Vec::new();
     let ret = &func.decl.output;
@@ -100,7 +100,8 @@ pub fn assert_instr(
     let to_test = quote! {
         #attrs
         #[no_mangle]
-        unsafe extern #abi fn #shim_name(#(#inputs),*) #ret {
+        #[inline(never)]
+        pub unsafe extern #abi fn #shim_name(#(#inputs),*) #ret {
             // The compiler in optimized mode by default runs a pass called
             // "mergefunc" where it'll merge functions that look identical.
             // Turns out some intrinsics produce identical code and they're
@@ -132,6 +133,8 @@ pub fn assert_instr(
         #[allow(non_snake_case)]
         fn #assert_name() {
             #to_test
+
+            unsafe { asm!("" : : "r"(#shim_name as usize) : "memory" : "volatile") };
 
             ::stdsimd_test::assert(#shim_name as usize,
                                    stringify!(#shim_name),

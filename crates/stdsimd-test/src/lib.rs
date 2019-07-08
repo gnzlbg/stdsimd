@@ -8,7 +8,6 @@
 #![allow(clippy::missing_docs_in_private_items, clippy::print_stdout)]
 
 extern crate assert_instr_macro;
-extern crate backtrace;
 extern crate cc;
 #[macro_use]
 extern crate lazy_static;
@@ -46,38 +45,56 @@ lazy_static! {
     static ref DISASSEMBLY: HashMap<String, Vec<Function>> = disassemble_myself();
 }
 
+#[derive(Debug)]
 struct Function {
     addr: Option<usize>,
     instrs: Vec<Instruction>,
 }
 
+#[derive(Debug)]
 struct Instruction {
     parts: Vec<String>,
 }
 
-fn normalize(symbol: &str) -> String {
+fn normalize(mut symbol: &str) -> String {
+    //eprintln!("before normalization: {}", symbol);
+    // Remove trailing colon:
+    if symbol.ends_with(':') {
+      symbol = &symbol[..symbol.len() - 1];
+    }
+    //eprintln!("  after trailing colon removal: {}", symbol);
     let symbol = rustc_demangle::demangle(symbol).to_string();
+    //eprintln!("  after demangling: {}", symbol);
     let mut ret = match symbol.rfind("::h") {
         Some(i) => symbol[..i].to_string(),
         None => symbol.to_string(),
     };
+    //eprintln!("  after hash removal: {}", ret);
+
+    // Remove Rust paths
+    if let Some(last_colon) = ret.rfind(":") {
+        ret = (&ret[last_colon+1..]).to_string();
+    }
+    //eprintln!("  after path removal: {}", ret);
+
     // Normalize to no leading underscore to handle platforms that may
     // inject extra ones in symbol names.
     while ret.starts_with('_') {
         ret.remove(0);
     }
+    //eprintln!("  after normalization: {}", ret);
     ret
 }
+
 
 /// Main entry point for this crate, called by the `#[assert_instr]` macro.
 ///
 /// This asserts that the function at `fnptr` contains the instruction
 /// `expected` provided.
-pub fn assert(fnptr: usize, fnname: &str, expected: &str) {
-    let mut fnname = fnname.to_string();
-    let functions = get_functions(fnptr, &mut fnname);
-    assert_eq!(functions.len(), 1);
-    let function = &functions[0];
+pub fn assert(_fnptr: usize, fnname: &str, expected: &str) {
+    eprintln!("shim name: {}", fnname);
+    let function = &DISASSEMBLY.get(&fnname.to_string()).unwrap()[0];
+    eprintln!("  function: {:?}", function);
 
     let mut instrs = &function.instrs[..];
     while instrs.last().map_or(false, |s| s.parts == ["nop"]) {
@@ -198,39 +215,6 @@ pub fn assert(fnptr: usize, fnname: &str, expected: &str) {
     }
 }
 
-fn get_functions(fnptr: usize, fnname: &mut String) -> &'static [Function] {
-    // Translate this function pointer to a symbolic name that we'd have found
-    // in the disassembly.
-    let mut sym = None;
-    backtrace::resolve(fnptr as *mut _, |name| {
-        sym = name.name().and_then(|s| s.as_str()).map(normalize);
-    });
-
-    if let Some(sym) = &sym {
-        if let Some(s) = DISASSEMBLY.get(sym) {
-            *fnname = sym.to_string();
-            return s;
-        }
-    }
-
-    let exact_match = DISASSEMBLY
-        .iter()
-        .find(|(_, list)| list.iter().any(|f| f.addr == Some(fnptr)));
-    if let Some((name, list)) = exact_match {
-        *fnname = name.to_string();
-        return list;
-    }
-
-    if let Some(sym) = sym {
-        println!("assumed symbol name: `{}`", sym);
-    }
-    println!("maybe related functions");
-    for f in DISASSEMBLY.keys().filter(|k| k.contains(&**fnname)) {
-        println!("\t- {}", f);
-    }
-    panic!("failed to find disassembly of {:#x} ({})", fnptr, fnname);
-}
-
 pub fn assert_skip_test_ok(name: &str) {
     if env::var("STDSIMD_TEST_EVERYTHING").is_err() {
         return;
@@ -239,4 +223,5 @@ pub fn assert_skip_test_ok(name: &str) {
 }
 
 // See comment in `assert-instr-macro` crate for why this exists
-pub static _DONT_DEDUP: AtomicPtr<u8> = AtomicPtr::new(unsafe { std::mem::transmute("".as_bytes().as_ptr()) });
+pub static _DONT_DEDUP: AtomicPtr<u8>
+    = AtomicPtr::new(unsafe { std::mem::transmute("".as_bytes().as_ptr()) });
